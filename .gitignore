@@ -1,0 +1,105 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Environments
+.env
+.envrc
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Testing / coverage
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+htmlcov/
+
+# Type checkers / linters
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints
+profile_default/
+ipython_config.py
+
+# ---------- Protobuf ----------
+# Generated language bindings. The .proto files under schemas/proto are the
+# source of truth; generated code is a build artifact and is not committed.
+schemas/gen/
+*_pb2.py
+*_pb2.pyi
+*_pb2_grpc.py
+*.pb.go
+*.pb.cc
+*.pb.h
+*_pb.js
+*_pb.d.ts
+*.descriptor
+*.desc
+descriptor_set.pb
+
+# Buf
+buf.lock
+
+# ---------- Test artifacts ----------
+# Large recorded captures are distributed out-of-band, not committed, unless a
+# specific corpus file is deliberately added with `git add -f`.
+tests/corpora/pcap/*.pcap
+tests/corpora/pcap/*.pcapng
+tests/reports/
+*.log
+
+# ---------- Editors / OS ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# ---------- Office temp files ----------
+# Word/Excel lock files. The real documents in reference/ are committed.
+~$*.docx
+~$*.doc
+~$*.xlsx
+~$*.pptx

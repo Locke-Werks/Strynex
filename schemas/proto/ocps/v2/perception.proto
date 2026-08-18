@@ -1,0 +1,46 @@
+// O-CPS (Open Cooperative Perception System) -- PerceivedObject, PerceptionSummary
+//
+// Normative source: OCPS_Whitepaper_v0.2.docx, Appendix A.2.
+// Message and field definitions below are reproduced VERBATIM from the
+// specification. The `syntax`, `package`, `option`, and `import` statements are
+// mechanical additions required to make the file compile; they are not spec text.
+//
+// Comment lines tagged [spec §N] were added during extraction and cite the
+// section of the whitepaper that states the unit or constraint. Untagged
+// comments are the specification's own.
+//
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 Archon C. Locke, Specter Point Intelligence, LLC
+
+syntax = "proto3";
+
+package ocps.v2;
+
+option java_package = "com.strynex.ocps.v2";
+option java_multiple_files = true;
+option go_package = "github.com/lockewerks/Strynex/schemas/gen/ocpsv2";
+
+import "ocps/v2/common.proto";
+
+
+message PerceivedObject {
+  uint32 class_id       = 1;  // see §7.2
+  uint32 confidence     = 2;  // 0-255, see §7.3
+  float  range_m        = 3;  // [spec §8.3] relative position: range from transmitter
+  float  bearing_deg    = 4;  // relative to transmitter heading
+  Dimensions dims       = 5;  // [spec §8.3] bounding box (length, width, height)
+  float  rel_v_long_mps = 6;  // [spec §8.3] velocity relative to transmitter (longitudinal)
+  float  rel_v_lat_mps  = 7;  // [spec §8.3] velocity relative to transmitter (lateral)
+  uint32 sensor_mask    = 8;  // bit0=radar, bit1=lidar,
+                              // bit2=camera, bit3=ultrasonic,
+                              // bit4=other
+  bytes  vendor_oid     = 9;  // optional; empty unless class_id=0xFF
+}
+
+message PerceptionSummary {
+  OcpsHeader header     = 1;
+  Pose       own_pose   = 2;  // [spec §7.1] WGS-84; deviation is a conformance failure
+  Dimensions own_dims   = 3;
+  repeated PerceivedObject objects = 4;
+  bytes signature       = 15; // ECDSA-P256 over fields 1-4
+}

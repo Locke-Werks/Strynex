@@ -1,0 +1,28 @@
+Strynex / O-CPS (Open Cooperative Perception System)
+Copyright (c) 2026 Archon C. Locke, Specter Point Intelligence, LLC
+Colorado Springs, Colorado, USA
+
+This product includes software and schemas developed by
+Specter Point Intelligence, LLC.
+
+DUAL LICENSING
+--------------
+The specification text in spec/ and the source documents in reference/ are
+licensed under the Creative Commons Attribution 4.0 International License
+(CC-BY-4.0). See spec/LICENSE.
+
+All other material in this repository, including the protobuf schemas in
+schemas/, the conformance test scaffolding in tests/, and any reference
+implementation code, is licensed under the Apache License, Version 2.0
+(Apache-2.0). See LICENSE.
+
+PATENT POSTURE
+--------------
+Per section 18.3 of the specification, no patent claims are asserted against
+good-faith implementers.
+
+TRADEMARK
+---------
+"Strynex" is a trademark of Specter Point Intelligence, LLC. It is not licensed
+under either of the licenses above. Implementations may claim conformance to
+O-CPS without permission; they may not use the Strynex name or marks without it.

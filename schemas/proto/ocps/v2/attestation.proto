@@ -1,0 +1,46 @@
+// O-CPS (Open Cooperative Perception System) -- SensorHealth, Attestation
+//
+// Normative source: OCPS_Whitepaper_v0.2.docx, Appendix A.5.
+// Message and field definitions below are reproduced VERBATIM from the
+// specification. The `syntax`, `package`, `option`, and `import` statements are
+// mechanical additions required to make the file compile; they are not spec text.
+//
+// Comment lines tagged [spec §N] were added during extraction and cite the
+// section of the whitepaper that states the unit or constraint. Untagged
+// comments are the specification's own.
+//
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 Archon C. Locke, Specter Point Intelligence, LLC
+
+syntax = "proto3";
+
+package ocps.v2;
+
+option java_package = "com.strynex.ocps.v2";
+option java_multiple_files = true;
+option go_package = "github.com/lockewerks/Strynex/schemas/gen/ocpsv2";
+
+import "ocps/v2/common.proto";
+
+
+message SensorHealth {
+  uint32 radar_active      = 1;
+  uint32 radar_degraded    = 2;
+  uint32 lidar_active      = 3;
+  uint32 lidar_degraded    = 4;
+  uint32 camera_active     = 5;
+  uint32 camera_degraded   = 6;
+  uint32 ultrasonic_active = 7;
+  uint32 ultrasonic_degraded = 8;
+}
+
+message Attestation {
+  OcpsHeader   header          = 1;
+  string       vendor_oid      = 2;
+  string       stack_version   = 3;
+  bytes        build_fingerprint  = 4;  // SHA-256
+  bytes        config_fingerprint = 5;  // SHA-256
+  bytes        platform_quote  = 6;     // HSM/TPM attestation blob
+  SensorHealth sensors         = 7;
+  bytes        signature       = 15;
+}

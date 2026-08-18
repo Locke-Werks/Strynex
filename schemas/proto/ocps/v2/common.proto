@@ -1,0 +1,52 @@
+// O-CPS (Open Cooperative Perception System) -- OcpsHeader, Pose, Dimensions
+//
+// Normative source: OCPS_Whitepaper_v0.2.docx, Appendix A.1.
+// Message and field definitions below are reproduced VERBATIM from the
+// specification. The `syntax`, `package`, `option`, and `import` statements are
+// mechanical additions required to make the file compile; they are not spec text.
+//
+// Comment lines tagged [spec §N] were added during extraction and cite the
+// section of the whitepaper that states the unit or constraint. Untagged
+// comments are the specification's own.
+//
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 Archon C. Locke, Specter Point Intelligence, LLC
+
+syntax = "proto3";
+
+package ocps.v2;
+
+option java_package = "com.strynex.ocps.v2";
+option java_multiple_files = true;
+option go_package = "github.com/lockewerks/Strynex/schemas/gen/ocpsv2";
+
+
+message OcpsHeader {
+  uint32 version      = 1;  // MUST be 2
+  uint64 timestamp_ms = 2;  // [spec §8.1] ms since Unix epoch, UTC
+  bytes  cert_id      = 3;  // 8 bytes
+  uint32 msg_class    = 4;  // [spec §8.1] 0x01=PerceptionSummary, 0x02=Intent,
+                            //             0x03=GroupState, 0x04=Attestation,
+                            //             0x05=Telemetry
+  uint32 seq          = 5;  // [spec §8.1] monotonically increasing per-sender counter
+  uint32 horizon_m    = 6;  // [spec §8.1, §7.4] relevance horizon (meters)
+  uint32 lifetime_ms  = 7;  // [spec §8.1] message validity lifetime after timestamp, ms
+}
+
+message Pose {
+  double lat           = 1;  // WGS-84, degrees
+  double lon           = 2;  // WGS-84, degrees
+  float  alt_m         = 3;  // [spec §7.1] meters above the WGS-84 ellipsoid
+  float  yaw_deg       = 4;  // clockwise from true north
+  float  pitch_deg     = 5;
+  float  roll_deg      = 6;
+  float  speed_mps     = 7;  // [spec §7.1] meters per second along the heading axis
+  float  accel_mps2    = 8;  // longitudinal, signed
+}
+
+// [spec §8.3] Transmitter dimensions are carried in centimeters.
+message Dimensions {
+  uint32 length_cm = 1;
+  uint32 width_cm  = 2;
+  uint32 height_cm = 3;
+}

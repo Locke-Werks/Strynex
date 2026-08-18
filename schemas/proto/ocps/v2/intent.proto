@@ -1,0 +1,49 @@
+// O-CPS (Open Cooperative Perception System) -- IntentCode, Intent
+//
+// Normative source: OCPS_Whitepaper_v0.2.docx, Appendix A.3.
+// Message and field definitions below are reproduced VERBATIM from the
+// specification. The `syntax`, `package`, `option`, and `import` statements are
+// mechanical additions required to make the file compile; they are not spec text.
+//
+// Comment lines tagged [spec §N] were added during extraction and cite the
+// section of the whitepaper that states the unit or constraint. Untagged
+// comments are the specification's own.
+//
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 Archon C. Locke, Specter Point Intelligence, LLC
+
+syntax = "proto3";
+
+package ocps.v2;
+
+option java_package = "com.strynex.ocps.v2";
+option java_multiple_files = true;
+option go_package = "github.com/lockewerks/Strynex/schemas/gen/ocpsv2";
+
+import "ocps/v2/common.proto";
+
+
+enum IntentCode {
+  INTENT_UNKNOWN       = 0;
+  STRAIGHT             = 1;
+  LANE_CHANGE_LEFT     = 2;
+  LANE_CHANGE_RIGHT    = 3;
+  TURN_LEFT            = 4;
+  TURN_RIGHT           = 5;
+  MERGE                = 6;
+  EXIT                 = 7;
+  STOP                 = 8;
+  YIELD                = 9;
+  PLATOON_FORM         = 10;
+  PLATOON_LEAVE        = 11;
+}
+
+message Intent {
+  OcpsHeader header         = 1;
+  IntentCode code           = 2;
+  uint32     prediction_ms  = 3;
+  uint32     confidence     = 4;   // 0-255
+  bool       driver_committed = 5;
+  bytes      group_id       = 6;   // optional, 16 bytes
+  bytes      signature      = 15;
+}

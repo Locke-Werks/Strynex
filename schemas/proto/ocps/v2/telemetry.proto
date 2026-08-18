@@ -1,0 +1,39 @@
+// O-CPS (Open Cooperative Perception System) -- TelemetryKind, Telemetry
+//
+// Normative source: OCPS_Whitepaper_v0.2.docx, Appendix A.6.
+// Message and field definitions below are reproduced VERBATIM from the
+// specification. The `syntax`, `package`, `option`, and `import` statements are
+// mechanical additions required to make the file compile; they are not spec text.
+//
+// Comment lines tagged [spec §N] were added during extraction and cite the
+// section of the whitepaper that states the unit or constraint. Untagged
+// comments are the specification's own.
+//
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 Archon C. Locke, Specter Point Intelligence, LLC
+
+syntax = "proto3";
+
+package ocps.v2;
+
+option java_package = "com.strynex.ocps.v2";
+option java_multiple_files = true;
+option go_package = "github.com/lockewerks/Strynex/schemas/gen/ocpsv2";
+
+import "ocps/v2/common.proto";
+
+
+enum TelemetryKind {
+  TELEMETRY_UNKNOWN     = 0;
+  ROAD_SURFACE_FRICTION = 1;
+  WEATHER_ESTIMATE      = 2;
+  LOCAL_CONGESTION      = 3;
+  HAZARD_FLAG           = 4;
+}
+
+message Telemetry {
+  OcpsHeader    header = 1;
+  TelemetryKind kind   = 2;
+  bytes         payload = 3;   // kind-specific encoding
+  bytes         signature = 15;
+}
