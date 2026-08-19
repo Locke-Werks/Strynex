@@ -1,0 +1,287 @@
+// O-CPS -- Telemetry payload encodings for the four TelemetryKind values of
+// Appendix A.6
+//
+// PROPOSED for O-CPS v0.3. NOT NORMATIVE. See ../../../README.md.
+//
+// Appendix A.6 defines:
+//
+//     message Telemetry {
+//       OcpsHeader    header    = 1;
+//       TelemetryKind kind      = 2;
+//       bytes         payload   = 3;   // kind-specific encoding
+//       bytes         signature = 15;
+//     }
+//
+// The kind-specific encoding is not defined anywhere in v0.2, for any of the
+// four assigned kinds. Until it is, Telemetry is an untyped byte string, the
+// automated privacy scan required by section 16.3 cannot inspect it, and the
+// PCAP corpus required by section 16.2 for the five deployment scenarios of
+// section 15 cannot be recorded. This file closes that gap.
+//
+// CONSTRAINTS INHERITED FROM THE BASE SPECIFICATION
+//
+//   section 8.2   Telemetry: rate <= 0.1 Hz, size <= 1 KB, PPPP 7, AC_BE, QM.
+//   section 10.4  A vehicle MUST NOT transmit Telemetry without explicit owner
+//                 opt-in. Factory default is disabled.
+//   section 10.3  Aggregated road condition data: 90 days at operator,
+//                 pre-anonymized before aggregation. MUST NOT be joined to
+//                 identity outside the 30-day enrollment window.
+//   section 10.2  Telemetry is the ONLY channel through which O-CPS content may
+//                 be aggregated at metropolitan scale. Its payloads therefore
+//                 carry the entire privacy burden of wide-area aggregation.
+//
+// DESIGN CONSEQUENCE OF section 10.2
+//
+// None of these payloads carries a precise position. Position is quantized to a
+// GridCell whose resolution is stated on the wire and is coarse relative to the
+// 0.1 Hz rate ceiling. At highway speed a participant travels roughly 300 m
+// between permitted transmissions, so a 50 m cell does not over-resolve the
+// path it could already reconstruct from message timing alone. Finer
+// quantization would turn the aggregation channel into a movement trace, which
+// section 10.5 prohibits.
+//
+// No payload carries any identifier. Sender identity on the wire is the
+// pseudonym cert_id in OcpsHeader and nothing here supplements it.
+//
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 Archon C. Locke, Specter Point Intelligence, LLC
+
+syntax = "proto3";
+
+package ocps.v2;
+
+option java_package = "com.strynex.ocps.v2";
+option java_multiple_files = true;
+option go_package = "github.com/lockewerks/Strynex/schemas/gen/ocpsv2";
+
+
+// ---------------------------------------------------------------------------
+// Common
+// ---------------------------------------------------------------------------
+
+enum GridResolution {
+  GRID_RESOLUTION_UNKNOWN = 0;
+  GRID_25M   = 1;
+  GRID_50M   = 2;
+  GRID_100M  = 3;
+  GRID_500M  = 4;
+  GRID_1KM   = 5;
+}
+
+// Quantized WGS-84 position. Normative quantization, given a cell edge C metres:
+//
+//   lat_step_deg = C / 111320
+//   lat_q        = floor(lat_deg / lat_step_deg)
+//   lat_center   = (lat_q + 0.5) * lat_step_deg
+//   lon_step_deg = C / (111320 * cos(lat_center))
+//   lon_q        = floor(lon_deg / lon_step_deg)
+//
+// A decoder recovers the cell centre by inverting in the same order, taking
+// lat_center from lat_q before computing lon_step_deg. The order matters: it is
+// what makes the encoding round-trip at all latitudes.
+//
+// A transmitter MUST NOT declare a finer resolution than the accuracy of its
+// own pose estimate supports. Where erratum E-04 is adopted, a participant
+// whose horizontal accuracy exceeds the cell edge MUST use the next coarser
+// resolution.
+message GridCell {
+  sint32         lat_q      = 1;
+  sint32         lon_q      = 2;
+  GridResolution resolution = 3;
+}
+
+// Lanes affected, as a bitfield.
+//   bit 0  : shoulder or breakdown lane
+//   bit 1  : rightmost travel lane in the direction of travel
+//   bit 2..: successive lanes leftward
+// Where a MAP describes the roadway, lane numbering follows the MAP and this
+// bitfield is a convenience only. Right-hand-traffic convention; in
+// left-hand-traffic jurisdictions bit 1 is the leftmost travel lane and the
+// sequence proceeds rightward.
+// All bits clear means "not lane specific".
+
+
+// ---------------------------------------------------------------------------
+// kind = 1, ROAD_SURFACE_FRICTION
+// ---------------------------------------------------------------------------
+
+enum SurfaceState {
+  SURFACE_STATE_UNKNOWN = 0;
+  SURFACE_DRY            = 1;
+  SURFACE_DAMP           = 2;
+  SURFACE_WET            = 3;
+  SURFACE_STANDING_WATER = 4;
+  SURFACE_SLUSH          = 5;
+  SURFACE_SNOW_LOOSE     = 6;
+  SURFACE_SNOW_PACKED    = 7;
+  SURFACE_ICE            = 8;
+  SURFACE_BLACK_ICE      = 9;   // ice not visually distinguishable from wet
+  // 10-31 reserved for the base specification
+  // 32-127 profile allocated, see EP-000F
+  // 128-255 vendor private
+}
+
+enum FrictionDerivation {
+  FRICTION_DERIVATION_UNKNOWN = 0;
+  DERIVED_WHEEL_SLIP        = 1;  // slip ratio during normal traction
+  DERIVED_ABS_ACTIVATION    = 2;  // anti-lock event
+  DERIVED_ESC_ACTIVATION    = 3;  // stability control intervention
+  DERIVED_TRACTION_CONTROL  = 4;
+  DERIVED_TEMPERATURE_MODEL = 5;  // inferred from surface and dewpoint, not measured
+  DERIVED_DIRECT_SENSOR     = 6;  // optical or acoustic road condition sensor
+}
+
+message RoadSurfaceFriction {
+  GridCell           cell        = 1;
+  // Estimated tyre-road friction coefficient, x100. 0 to 120. A value of 80
+  // denotes mu = 0.80. Absent as 0 with confidence 0.
+  uint32             mu_e2       = 2;
+  SurfaceState       surface     = 3;
+  FrictionDerivation derivation  = 4;
+  // 0-255, banded exactly as section 7.3. A DERIVED_TEMPERATURE_MODEL estimate
+  // MUST NOT exceed MEDIUM (127): it is inference, not observation.
+  uint32             confidence  = 5;
+  // Deci-degrees Celsius. -400 = -40.0 C. Omit by leaving unset.
+  sint32             surface_temp_c_e1 = 6;
+  sint32             ambient_temp_c_e1 = 7;
+  uint32             lane_mask   = 8;
+}
+
+
+// ---------------------------------------------------------------------------
+// kind = 2, WEATHER_ESTIMATE
+// ---------------------------------------------------------------------------
+
+enum Precipitation {
+  PRECIPITATION_UNKNOWN = 0;
+  PRECIP_NONE     = 1;
+  PRECIP_RAIN     = 2;
+  PRECIP_SLEET    = 3;
+  PRECIP_SNOW     = 4;
+  PRECIP_HAIL     = 5;
+  PRECIP_FREEZING_RAIN = 6;
+}
+
+enum Intensity {
+  INTENSITY_UNKNOWN = 0;
+  INTENSITY_LIGHT    = 1;
+  INTENSITY_MODERATE = 2;
+  INTENSITY_HEAVY    = 3;
+  INTENSITY_EXTREME  = 4;
+}
+
+enum WeatherDerivation {
+  WEATHER_DERIVATION_UNKNOWN = 0;
+  DERIVED_WIPER_STATE     = 1;
+  DERIVED_RAIN_SENSOR     = 2;
+  DERIVED_CAMERA_CONTRAST = 3;
+  DERIVED_LIDAR_BACKSCATTER = 4;
+  DERIVED_THERMOMETER     = 5;
+  DERIVED_FOG_LIGHT_STATE = 6;
+}
+
+message WeatherEstimate {
+  // Resolution SHOULD be GRID_500M or coarser. Weather does not vary at 50 m
+  // and finer cells only increase correlation risk.
+  GridCell          cell           = 1;
+  Precipitation     precipitation  = 2;
+  Intensity         intensity      = 3;
+  // Estimated meteorological visibility in metres, saturating at 10000.
+  uint32            visibility_m   = 4;
+  sint32            ambient_temp_c_e1 = 5;
+  WeatherDerivation derivation     = 6;
+  uint32            confidence     = 7;  // 0-255, section 7.3 bands
+}
+
+
+// ---------------------------------------------------------------------------
+// kind = 3, LOCAL_CONGESTION
+// ---------------------------------------------------------------------------
+
+enum FlowTrend {
+  FLOW_TREND_UNKNOWN = 0;
+  FLOW_BUILDING = 1;
+  FLOW_STABLE   = 2;
+  FLOW_CLEARING = 3;
+}
+
+// PRIVACY NOTE, normative for implementers.
+//
+// A LocalCongestion payload derived solely from the transmitter's own speed is
+// a report about the transmitter, not about traffic, and repeated at the rate
+// ceiling it approximates a movement trace. A conforming transmitter MUST
+// derive observed_vehicles and mean_speed from its fused world model, that is
+// from other vehicles it perceives, and MUST NOT emit LocalCongestion where
+// observed_vehicles is zero.
+message LocalCongestion {
+  GridCell  cell             = 1;
+  // Mean speed of observed traffic in deci-metres per second. 135 = 13.5 m/s.
+  uint32    mean_speed_mps_e1 = 2;
+  // Mean speed as a percentage of the free-flow or posted speed where known,
+  // 0-100. This normalizes across road classes and is the field an operator
+  // actually aggregates. 0 if free-flow speed is unknown.
+  uint32    speed_ratio_pct  = 3;
+  // Count of distinct vehicles contributing to this estimate. MUST be >= 1.
+  uint32    observed_vehicles = 4;
+  bool      queue_present    = 5;
+  // Estimated standing queue length in metres, saturating at 5000. 0 if none.
+  uint32    queue_length_m   = 6;
+  FlowTrend trend            = 7;
+  uint32    lane_mask        = 8;
+  uint32    confidence       = 9;  // 0-255, section 7.3 bands
+}
+
+
+// ---------------------------------------------------------------------------
+// kind = 4, HAZARD_FLAG
+// ---------------------------------------------------------------------------
+
+enum HazardType {
+  HAZARD_TYPE_UNKNOWN = 0;
+  HAZARD_DEBRIS_IN_LANE          = 1;
+  HAZARD_STOPPED_VEHICLE_IN_LANE = 2;
+  HAZARD_DISABLED_VEHICLE_SHOULDER = 3;
+  HAZARD_COLLISION               = 4;
+  HAZARD_ANIMAL                  = 5;
+  HAZARD_PERSON_IN_ROADWAY       = 6;
+  HAZARD_FLOODING                = 7;
+  HAZARD_ICE_PATCH               = 8;
+  HAZARD_REDUCED_VISIBILITY      = 9;   // smoke, fog bank, blowing snow, dust
+  HAZARD_UNPLANNED_ROADWORK      = 10;
+  HAZARD_SURFACE_DEFECT          = 11;  // pothole, blown joint, missing cover
+  // 12-31 reserved for the base specification
+  // 32-127 profile allocated, see EP-0011 Extended Hazard Reporting
+  // 128-255 vendor private
+  //
+  // A receiver encountering an unrecognised HazardType MUST treat it as
+  // HAZARD_TYPE_UNKNOWN and MUST NOT discard the message. This mirrors the
+  // safe-ignore rule of EP-0000 section 7.1.
+}
+
+enum HazardSeverity {
+  HAZARD_SEVERITY_UNKNOWN = 0;
+  SEVERITY_ADVISORY = 1;  // present, no action expected
+  SEVERITY_CAUTION  = 2;  // reduce speed or increase attention
+  SEVERITY_HAZARD   = 3;  // lane change or significant speed reduction advised
+  SEVERITY_BLOCKING = 4;  // lane impassable
+}
+
+message HazardFlag {
+  // Resolution SHOULD be GRID_25M. A hazard reported to 500 m is not
+  // actionable, which is the one case where precision outweighs the
+  // correlation concern: the report is about a fixed point in the road, not
+  // about the reporter.
+  GridCell       cell        = 1;
+  HazardType     type        = 2;
+  HazardSeverity severity    = 3;
+  uint32         lane_mask   = 4;
+  uint32         confidence  = 5;  // 0-255, section 7.3 bands
+  // Estimated seconds the hazard will persist, saturating at 86400. 0 if
+  // unknown. A transmitter SHOULD NOT guess; 0 is the honest default.
+  uint32         expected_persistence_s = 6;
+  // Count of independent observers the transmitter believes corroborate this
+  // hazard, including itself. Advisory only and trivially forgeable. A receiver
+  // MUST NOT let this field raise a track above the section 11.4 advisory
+  // threshold, and MUST derive corroboration from its own fused world model.
+  uint32         corroboration_count = 7;
+}

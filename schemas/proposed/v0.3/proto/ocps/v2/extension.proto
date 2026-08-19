@@ -1,0 +1,97 @@
+// O-CPS -- ExtensionBlock, ConformanceDeclaration
+//
+// PROPOSED for O-CPS v0.3. NOT NORMATIVE. Nothing in this directory is part of
+// the v0.2 specification. See ../../../README.md for what is proposed and why.
+//
+// ExtensionBlock is defined by EP-0000 section 5.
+// ConformanceDeclaration is the resolution proposed for erratum E-01, which
+// records that the "PerceptionSummary vendor-extension field" required by
+// specification section 16.1 does not exist in Appendix A.2.
+//
+// Both are additive. Adopting them does not change OcpsHeader.version, which
+// stays at 2: protobuf field addition is wire-compatible and an existing
+// decoder ignores unknown fields.
+//
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 Archon C. Locke, Specter Point Intelligence, LLC
+
+syntax = "proto3";
+
+package ocps.v2;
+
+option java_package = "com.strynex.ocps.v2";
+option java_multiple_files = true;
+option go_package = "github.com/lockewerks/Strynex/schemas/gen/ocpsv2";
+
+
+// Carrier for all extension profile content. Defined by EP-0000 section 5.
+//
+// Carried as a repeated field on PerceptionSummary, Intent, GroupState and
+// Telemetry. Deliberately NOT carried on Attestation: attestation content feeds
+// the trust weighting of specification section 11.3, and permitting
+// profile-defined material there would let a profile influence its own trust.
+//
+// MUST fall inside the signature scope of the carrying message. A message
+// carrying an ExtensionBlock outside the signed range MUST be rejected.
+//
+// Combined extension content MUST NOT push the carrying message beyond the
+// per-class size envelope of specification section 8.2.
+message ExtensionBlock {
+  // Profile identifier, 16-bit. Ranges are partitioned by EP-0000 section 3:
+  //   0x0000           reserved, denotes "no profile"
+  //   0x0001 - 0x00FF  core, open
+  //   0x0100 - 0x0FFF  registered third-party
+  //   0x1000 - 0x7FFF  vendor, allocated in blocks of 256
+  //   0x8000 - 0xFFFF  experimental, MUST NOT be transmitted on production
+  //                    SCMS or C-ITS credentials
+  uint32 profile_id = 1;
+
+  // Profile-defined, monotonic. A receiver that recognises profile_id but not
+  // profile_version MUST apply the safe-ignore behavior of EP-0000 section 7.1.
+  uint32 profile_version = 2;
+
+  // Profile-defined encoding. Profiles MUST publish this encoding in sufficient
+  // detail for the automated privacy scan of specification section 16.3 to run
+  // against it, including vendor profiles, which may publish the encoding
+  // without publishing the behavior. See EP-0000 section 9.
+  bytes payload = 3;
+
+  // Bit 0: CRITICAL. Set when omission of this block changes the meaning of the
+  //        carrying message rather than merely adding to it. A receiver that
+  //        does not recognise profile_id on a CRITICAL block MUST discard the
+  //        entire carrying message and MUST NOT count it toward any rate,
+  //        freshness, or consensus calculation. MUST NOT be set on a block
+  //        carried in a Telemetry message: Telemetry is QM per section 8.2 and
+  //        nothing in it is permitted to be load-bearing.
+  // Bits 1-31: reserved, MUST be 0.
+  uint32 flags = 4;
+}
+
+
+// Conformance class declaration. Proposed resolution for erratum E-01.
+//
+// REQUIRED on every PerceptionSummary transmitted by a Class A participant,
+// which does not transmit Attestation and therefore has no other route to make
+// the declaration section 16.1 requires of it.
+//
+// OPTIONAL but RECOMMENDED for Class B and Class I, which declare class in
+// Attestation.
+//
+// A receiver that has observed no Attestation from a sender within the section
+// 9.2 attestation lifetime AND no ConformanceDeclaration MUST treat the sender
+// as having stale attestation (w_attest = 0.2, section 11.3) rather than as
+// Class A (w_attest = 0.5). Silence is penalised more than an honest
+// declaration.
+message ConformanceDeclaration {
+  // ASCII of the class letter: 0x41 'A', 0x42 'B', 0x49 'I'.
+  // If erratum E-06 is adopted, 0x30 '0' denotes Class A0 (Beacon).
+  uint32 conformance_class = 1;
+
+  // Extension profile identifiers this participant implements. Advisory: a peer
+  // MUST NOT assume support merely because a profile is declared, and MUST NOT
+  // refuse base interoperation with a participant that declares none.
+  repeated uint32 profiles = 2;
+
+  // OPTIONAL. Absent for participants that do not wish to be vendor-attributed.
+  string vendor_oid = 3;
+}

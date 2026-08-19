@@ -1,0 +1,294 @@
+# O-CPS Extension Profile Registry
+#
+# Source of truth for extension profile identifiers and enum code point
+# allocations. Where this file and profiles/README.md disagree, this file wins.
+#
+# Partitions are normative and are defined in EP-0000 sections 3 and 4.
+# Allocations are permanent and are never reused, including after withdrawal.
+#
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 Archon C. Locke, Specter Point Intelligence, LLC
+
+registry_version: 1
+base_specification: "O-CPS v0.2 (April 2026)"
+framework: "EP-0000"
+status: proposed          # proposed | adopted. Adopted at O-CPS v0.3.
+maintainer: "editor of record, per O-CPS 18.4"
+
+# ---------------------------------------------------------------------------
+# Profile identifier space (EP-0000 section 3)
+# ---------------------------------------------------------------------------
+profile_id_ranges:
+  - range: [0x0000, 0x0000]
+    category: reserved
+    description: Denotes "no profile". Never allocated.
+  - range: [0x0001, 0x00FF]
+    category: core
+    description: Open profiles, CC BY 4.0, allocated by the registry maintainer.
+  - range: [0x0100, 0x0FFF]
+    category: registered
+    description: Third-party profiles. Allocated on request, no fee, no technical review.
+  - range: [0x1000, 0x7FFF]
+    category: vendor
+    block_size: 256
+    description: Privately administered blocks. Holder must record an IANA PEN or OID arc.
+  - range: [0x8000, 0xFFFF]
+    category: experimental
+    description: >-
+      Unregistered. MUST NOT be transmitted by a participant holding production
+      SCMS or C-ITS credentials. Collision expected and unmanaged.
+
+# ---------------------------------------------------------------------------
+# Allocated profiles
+# ---------------------------------------------------------------------------
+# status: written | allocated | withheld | withdrawn
+# Blocks reference the enum allocations further down.
+
+profiles:
+  - id: 0x0001
+    name: Intersection Assist
+    category: core
+    status: written
+    document: EP-0001-intersection-assist.md
+    min_conformance_class: A
+    max_asil: C
+    intent_block: [88, 95]
+    owed_by: "O-CPS 12.3 (deferred to a forthcoming extension profile); roadmap v0.4"
+
+  - id: 0x0002
+    name: Merge Negotiation
+    category: core
+    status: written
+    document: EP-0002-merge-negotiation.md
+    min_conformance_class: B
+    max_asil: C
+    intent_block: [64, 71]
+    owed_by: "IntentCode MERGE exists in Appendix A.3 with no protocol defined"
+
+  - id: 0x0003
+    name: Signal Timing Advisory
+    category: core
+    status: allocated
+    min_conformance_class: A
+    max_asil: B
+    intent_block: [128, 135]
+    notes: >-
+      Vehicle side paces approach against SPaT phase; infrastructure side times
+      phase against received Intent. Base 12.2.1 names "Greenwave integration"
+      inside Slipstream Mode without specifying it.
+
+  - id: 0x0004
+    name: Cooperative Positioning
+    category: core
+    status: allocated
+    min_conformance_class: B
+    max_asil: B
+    intent_block: [112, 119]
+    notes: >-
+      GNSS-denied operation. Base 13.4 requires a secondary time source for the
+      GNSS-denied case and specifies no cooperative positioning. Interacts with
+      errata E-04 (no positional accuracy requirement exists).
+
+  - id: 0x0005
+    name: Priority Vehicle Authorization
+    category: core
+    status: allocated
+    min_conformance_class: I
+    max_asil: C
+    intent_block: [72, 79]
+    warning: >-
+      SECURITY CRITICAL. A priority claim any participant can assert is a
+      corridor denial-of-service primitive. Authorization must bind to enrollment
+      credentials, and base 10.5 restricts exactly that linkage. Design the
+      authorization model before writing the profile.
+
+  - id: 0x0006
+    name: Vulnerable Road User Extended
+    category: core
+    status: allocated
+    min_conformance_class: A
+    max_asil: B
+    class_id_block: [0x40, 0x47]
+    blocked_by: ["E-03"]
+    warning: >-
+      BLOCKED. Base arithmetic caps a Class A VRU beacon track at trust weight
+      0.249 against the 11.4 advisory threshold of 0.5, so no conformant receiver
+      may act on it. Do not write this profile until E-03 is resolved in the base
+      specification.
+
+  - id: 0x0007
+    name: Work Zone Protection
+    category: core
+    status: allocated
+    min_conformance_class: I
+    max_asil: B
+    telemetry_block: [64, 71]
+    class_id_block: [0x48, 0x4F]
+    notes: "Base 15.3 describes the scenario; the MAP delta and worker-on-foot tracks are unencoded."
+
+  - id: 0x0008
+    name: Grade Crossing
+    category: core
+    status: allocated
+    min_conformance_class: I
+    max_asil: C
+    telemetry_block: [48, 55]
+
+  - id: 0x0009
+    name: School Transport
+    category: core
+    status: allocated
+    min_conformance_class: B
+    max_asil: C
+    intent_block: [96, 103]
+    notes: "Stop-arm state and school-zone envelope."
+
+  - id: 0x000A
+    name: Responder Scene Protection
+    category: core
+    status: allocated
+    min_conformance_class: B
+    max_asil: B
+    intent_block: [120, 127]
+    telemetry_block: [72, 79]
+    class_id_block: [0x50, 0x57]
+
+  - id: 0x000B
+    name: Wrong-Way Detection
+    category: core
+    status: allocated
+    min_conformance_class: I
+    max_asil: C
+    telemetry_block: [80, 87]
+    notes: "Pose and heading evaluated against MAP topology."
+
+  - id: 0x000C
+    name: Traffic Flow Damping
+    category: core
+    status: allocated
+    min_conformance_class: A
+    max_asil: B
+    intent_block: [104, 111]
+    notes: "Gap modulation to absorb stop-and-go shockwaves rather than transmit them."
+
+  - id: 0x000D
+    name: Network Flow Redistribution
+    category: core
+    status: allocated
+    min_conformance_class: I
+    max_asil: QM
+    telemetry_block: [56, 63]
+    notes: "Corridor-scale pre-diversion. QM because it is advisory routing, not a safety path."
+
+  - id: 0x000E
+    name: Low-Speed Cooperative Maneuvering
+    category: core
+    status: allocated
+    min_conformance_class: A
+    max_asil: B
+    intent_block: [80, 87]
+
+  - id: 0x000F
+    name: Road Surface State Extended
+    category: core
+    status: allocated
+    min_conformance_class: A
+    max_asil: QM
+    telemetry_block: [32, 39]
+    notes: "Extends the base ROAD_SURFACE_FRICTION and WEATHER_ESTIMATE kinds."
+
+  - id: 0x0010
+    name: Degraded Sensing Continuity
+    category: core
+    status: allocated
+    min_conformance_class: B
+    max_asil: B
+    notes: >-
+      Consumes SensorHealth from Attestation. Consumes no new code points; it
+      constrains fusion behavior only. Allocated an identifier so it can be
+      declared and conformance-tested.
+
+  - id: 0x0011
+    name: Extended Hazard Reporting
+    category: core
+    status: allocated
+    min_conformance_class: A
+    max_asil: B
+    telemetry_block: [40, 47]
+    notes: "Extends the base HAZARD_FLAG kind beyond a single undifferentiated flag."
+
+  - id_range: [0x1000, 0x10FF]
+    name: Specter Point Intelligence, LLC
+    category: vendor
+    status: allocated
+    oid_arc: "TODO: record IANA PEN or OID arc before adoption"
+    notes: >-
+      Privately administered 256-identifier block. Payload encodings must still
+      be published in sufficient detail for the 16.3 privacy scan to run, per
+      EP-0000 section 9.
+
+# ---------------------------------------------------------------------------
+# Deliberately not allocated
+# ---------------------------------------------------------------------------
+withheld:
+  - name: Nightwatch
+    reason: >-
+      Cooperative stationary awareness in lots and garages. Base 10.3 caps
+      PerceptionSummary retention at 60 seconds with no exception and 10.5
+      prohibits constructing long-term movement traces. No conformant version
+      exists. Recorded so the question stays visible, not so it gets built.
+      Resolution is an owner decision about the privacy model, not an
+      engineering task.
+
+# ---------------------------------------------------------------------------
+# Enum code point partitions (EP-0000 section 4)
+# ---------------------------------------------------------------------------
+enums:
+  IntentCode:
+    appendix: A.3
+    frozen: [0, 11]
+    core_reserved: [12, 63]
+    profile_allocated: [64, 191]
+    profile_block_size: 8
+    vendor_private: [192, 254]
+    profile_extension_value: 255
+    unallocated_blocks: [[136, 191]]
+
+  TelemetryKind:
+    appendix: A.6
+    frozen: [0, 4]
+    core_reserved: [5, 31]
+    profile_allocated: [32, 127]
+    profile_block_size: 8
+    vendor_private: [128, 254]
+    profile_extension_value: 255
+    unallocated_blocks: [[88, 127]]
+
+  ObjectClassId:
+    specification_section: "7.2"
+    frozen: [0x00, 0x0A]
+    core_reserved: [0x0B, 0x3F]
+    profile_allocated: [0x40, 0xBF]
+    profile_block_size: 8
+    vendor_private: [0xC0, 0xFE]
+    vendor_extension_value: 0xFF
+    unallocated_blocks: [[0x58, 0xBF]]
+    note: >-
+      Base 7.2 already reserves 0x0B-0xFE for the O-CPS registry and defines
+      0xFF as VENDOR_EXTENSION requiring an OID. That scheme is sub-allocated,
+      not replaced.
+
+# ---------------------------------------------------------------------------
+# Dependencies on unresolved errata
+# ---------------------------------------------------------------------------
+depends_on_errata:
+  - erratum: E-01
+    document: ../docs/errata-v0.2.md
+    blocks: "EP-0000 section 7.3 profile declaration for Class A participants"
+    reason: >-
+      Class A has no field in which to declare supported profiles, because the
+      PerceptionSummary vendor-extension field named by 16.1 does not exist.
+  - erratum: E-03
+    document: ../docs/errata-v0.2.md
+    blocks: "profile 0x0006"
+    reason: "VRU tracks cannot reach the 11.4 advisory threshold."
