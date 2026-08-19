@@ -47,13 +47,34 @@ established standards body**. This is not a codebase being groomed for a moat.
 - **v0.2: published.** The full draft specification, dated April 2026, is in
   [`spec/`](spec/), converted verbatim from the source document in
   [`reference/`](reference/).
-- **v0.3: open, not started.** Three deliverables, none begun: machine-readable
-  schemas, a Python test harness, and an adversarial PCAP corpus. Target Q3 2026.
-  See [`ROADMAP.md`](ROADMAP.md) and the repository issues.
+- **v0.3: open.** None of its three deliverables is complete: the machine-readable
+  schemas, the Python test harness, and the adversarial PCAP corpus. Target
+  Q3 2026. See [`ROADMAP.md`](ROADMAP.md) and the repository issues.
 
 The protobuf under [`schemas/`](schemas/) is a first extraction of Appendix A into
 compiling files. It is not yet the finished v0.3 schema deliverable. See the
 issue for what remains.
+
+Prerequisite work for v0.3 has landed and is not itself a deliverable:
+
+- [`docs/errata-v0.2.md`](docs/errata-v0.2.md) records eight verified defects in
+  v0.2, each with proposed replacement text. None is adopted. One is rated
+  critical: the trust arithmetic of §11.3 and §11.4 currently prevents a VRU
+  beacon track from raising any advisory, which defeats the §15.4 scenario.
+- [`profiles/`](profiles/) supplies the extension mechanism §6.6 permits and
+  never defines, and reserves enum code points for all planned behaviors. §19
+  freezes the wire format at v1.0, so ranges not reserved before then cannot be
+  reserved after.
+- [`schemas/proposed/v0.3/`](schemas/proposed/v0.3/) holds the additive schema
+  changes those two imply, including encodings for `Telemetry.payload`, which
+  v0.2 leaves undefined for all four `TelemetryKind` values and which the PCAP
+  corpus cannot be recorded without.
+
+Two things follow that are not yet decided, both tracked as errata. §16.2 defines
+the reference implementation as four components including a C reference codec
+that appears in no milestone, and §16.3's first conformance category needs it.
+And §14.3 applies the ISO 26262 lifecycle with no scoping by conformance class,
+which puts ASIL C on the cheapest class in the specification.
 
 ## Repository layout
 
@@ -73,10 +94,20 @@ schemas/proto/ocps/v2/ Normative protobuf from Appendix A, package ocps.v2
   group.proto          GroupMode, GroupState                 (A.4)
   attestation.proto    SensorHealth, Attestation             (A.5)
   telemetry.proto      TelemetryKind, Telemetry              (A.6)
+schemas/proposed/v0.3/ Proposed v0.3 schema additions. NOT normative.
+  README.md            What is proposed, the diffs against v2, and verification
+  proto/ocps/v2/       ExtensionBlock, ConformanceDeclaration, Telemetry payloads
+profiles/              Extension profile registry and profile specifications
+  EP-0000-...md        The framework: ID ranges, code points, safe-ignore rules
+  README.md            Registry, overlay map, and all code point allocations
+  registry.yaml        Machine-readable allocations. Source of truth.
+  EP-0001-...md        Intersection Assist, owed by §12.3 and roadmap v0.4
+  EP-0002-...md        Merge Negotiation, closes a v0.2 gap around IntentCode MERGE
 tests/                 Conformance suite scaffolding, stubs only, nothing passes
   README.md            What each of the seven suites must cover
 docs/
   conversion-notes.md  How spec/ was produced, verified, and what was left uncorrected
+  errata-v0.2.md       Eight verified v0.2 defects with proposed replacement text
   open-questions.md    Undecided questions. Not decisions.
 ROADMAP.md             v0.3 through v1.0
 LICENSE                Apache 2.0, applies to everything outside spec/ and reference/

@@ -1,0 +1,1121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Strynex overlay catalog: 26 named capabilities on the open O-CPS specification.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#128721;</text></svg>">
+<style>
+  /* minimal reset, matching what the artifact runtime supplies */
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0}
+  img,svg{display:block;max-width:100%}
+  table{border-collapse:collapse}
+</style>
+<title>Strynex Overlay Catalog</title>
+<style>
+  /* ---- tokens: light is the bare :root, dark redefined twice ---- */
+  :root {
+    --ground:    #ECEEF0;
+    --surface:   #F7F8FA;
+    --surface-2: #FFFFFF;
+    --line:      #D3D9DE;
+    --line-soft: #E3E7EB;
+    --ink:       #101820;
+    --ink-dim:   #4E5C68;
+    --ink-faint: #77848F;
+    --amber:     #915C05;
+    --amber-lit: #B8750D;
+    --cyan:      #14707F;
+    --ok:        #2C7448;
+    --slate:     #55646F;
+    --rust:      #9E3E26;
+    --ok-bg:     rgba(44,116,72,.10);
+    --slate-bg:  rgba(85,100,111,.10);
+    --rust-bg:   rgba(158,62,38,.10);
+    --amber-bg:  rgba(145,92,5,.09);
+    --shadow:    0 1px 2px rgba(16,24,32,.06), 0 8px 24px rgba(16,24,32,.05);
+
+    --f-display: Bahnschrift, "DIN Condensed", "DIN Alternate", "Archivo Narrow", "Haettenschweiler", "Franklin Gothic Medium", "Helvetica Neue", sans-serif;
+    --f-body: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", system-ui, "Helvetica Neue", sans-serif;
+    --f-mono: "Cascadia Code", "SF Mono", ui-monospace, Consolas, "Roboto Mono", monospace;
+
+    --step-0: 0.9375rem;
+    --step-1: 1.0625rem;
+    --step-2: 1.375rem;
+    --step-3: 1.875rem;
+    --step-4: 2.75rem;
+    --step-5: clamp(3rem, 7vw, 5.25rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:    #0A0F14;
+      --surface:   #121A21;
+      --surface-2: #17222B;
+      --line:      #26333E;
+      --line-soft: #1C2833;
+      --ink:       #E2E8ED;
+      --ink-dim:   #96A5B1;
+      --ink-faint: #6B7A86;
+      --amber:     #F0A33A;
+      --amber-lit: #FFBB5C;
+      --cyan:      #56C2D8;
+      --ok:        #6BBF87;
+      --slate:     #8B9BA8;
+      --rust:      #E07A58;
+      --ok-bg:     rgba(107,191,135,.12);
+      --slate-bg:  rgba(139,155,168,.12);
+      --rust-bg:   rgba(224,122,88,.12);
+      --amber-bg:  rgba(240,163,58,.10);
+      --shadow:    0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.30);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:    #0A0F14;
+    --surface:   #121A21;
+    --surface-2: #17222B;
+    --line:      #26333E;
+    --line-soft: #1C2833;
+    --ink:       #E2E8ED;
+    --ink-dim:   #96A5B1;
+    --ink-faint: #6B7A86;
+    --amber:     #F0A33A;
+    --amber-lit: #FFBB5C;
+    --cyan:      #56C2D8;
+    --ok:        #6BBF87;
+    --slate:     #8B9BA8;
+    --rust:      #E07A58;
+    --ok-bg:     rgba(107,191,135,.12);
+    --slate-bg:  rgba(139,155,168,.12);
+    --rust-bg:   rgba(224,122,88,.12);
+    --amber-bg:  rgba(240,163,58,.10);
+    --shadow:    0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.30);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: var(--step-0);
+    line-height: 1.6;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 clamp(1.1rem, 4vw, 2.5rem);
+  }
+
+  h1, h2, h3, .disp {
+    font-family: var(--f-display);
+    font-weight: 600;
+    text-wrap: balance;
+    margin: 0;
+    letter-spacing: .01em;
+  }
+
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: .6875rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0;
+  }
+
+  p { margin: 0; }
+  .prose { max-width: 68ch; color: var(--ink-dim); display: flex; flex-direction: column; gap: .9rem; }
+  .prose strong { color: var(--ink); font-weight: 600; }
+  code {
+    font-family: var(--f-mono);
+    font-size: .8125em;
+    background: var(--surface-2);
+    border: 1px solid var(--line-soft);
+    border-radius: 3px;
+    padding: .1em .35em;
+    color: var(--ink-dim);
+  }
+
+  /* ---- masthead ---- */
+  header.mast {
+    border-bottom: 1px solid var(--line);
+    background:
+      linear-gradient(180deg, var(--amber-bg), transparent 55%),
+      var(--surface);
+    padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(2rem, 5vw, 3rem);
+  }
+  .mast-grid { display: flex; flex-direction: column; gap: 1.75rem; }
+  .wordmark {
+    font-family: var(--f-display);
+    font-size: var(--step-5);
+    line-height: .88;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--ink);
+  }
+  .wordmark .x { color: var(--amber); }
+  .mast-sub {
+    font-family: var(--f-display);
+    font-size: var(--step-2);
+    line-height: 1.25;
+    color: var(--ink-dim);
+    max-width: 28ch;
+    letter-spacing: .015em;
+  }
+  .mast-thesis {
+    max-width: 60ch;
+    color: var(--ink-dim);
+    border-left: 2px solid var(--amber);
+    padding-left: 1.1rem;
+    line-height: 1.65;
+  }
+  .mast-thesis strong { color: var(--ink); font-weight: 600; }
+
+  .meta-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem 2.25rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--f-mono);
+    font-size: .75rem;
+    color: var(--ink-faint);
+  }
+  .meta-strip b { color: var(--ink-dim); font-weight: 500; }
+
+  /* ---- sections ---- */
+  section { padding: clamp(3rem, 7vw, 4.75rem) 0; border-bottom: 1px solid var(--line-soft); }
+  .sec-head { display: flex; flex-direction: column; gap: .65rem; margin-bottom: 2.25rem; }
+  .sec-head h2 { font-size: var(--step-3); line-height: 1.1; }
+  .sec-head .prose { margin-top: .35rem; }
+
+  /* ---- stack diagram ---- */
+  .split { display: grid; gap: 2rem; grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .split { grid-template-columns: 1.15fr .85fr; gap: 3rem; align-items: start; } }
+
+  .stack { display: flex; flex-direction: column; gap: 4px; }
+  .layer {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: 4px;
+    padding: .7rem .9rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: .2rem .8rem;
+  }
+  .layer .lname {
+    font-family: var(--f-display);
+    font-size: .95rem;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    min-width: 12ch;
+  }
+  .layer .lbody { font-family: var(--f-mono); font-size: .72rem; color: var(--ink-faint); }
+  .layer.owned {
+    border-color: var(--amber);
+    background: linear-gradient(90deg, var(--amber-bg), var(--surface) 70%);
+    border-left-width: 3px;
+    padding: 1rem .9rem;
+  }
+  .layer.owned .lname { color: var(--amber); }
+  .layer.owned .lbody { color: var(--ink-dim); }
+
+  .stack-legend {
+    display: flex; flex-wrap: wrap; gap: 1.25rem;
+    font-family: var(--f-mono); font-size: .72rem; color: var(--ink-faint);
+    margin-top: .9rem;
+  }
+  .swatch { display: inline-flex; align-items: center; gap: .45rem; }
+  .swatch i { width: 11px; height: 11px; border-radius: 2px; border: 1px solid var(--line); background: var(--surface); display: block; }
+  .swatch.own i { background: var(--amber); border-color: var(--amber); }
+
+  .ledger { display: flex; flex-direction: column; gap: 1.35rem; }
+  .ledger-row { display: flex; flex-direction: column; gap: .3rem; padding-bottom: 1.2rem; border-bottom: 1px solid var(--line-soft); }
+  .ledger-row:last-child { border-bottom: 0; padding-bottom: 0; }
+  .ledger-row .k {
+    font-family: var(--f-mono); font-size: .7rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--ink-faint);
+  }
+  .ledger-row .v { font-family: var(--f-display); font-size: var(--step-2); line-height: 1.2; color: var(--ink); letter-spacing: .015em; }
+  .ledger-row .n { color: var(--ink-dim); font-size: .875rem; line-height: 1.55; }
+  .ledger-row.hot .v { color: var(--amber); }
+
+  /* ---- product line + cards ---- */
+  .line-block { margin-bottom: 3.25rem; }
+  .line-block:last-child { margin-bottom: 0; }
+  .line-head {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1rem;
+    padding-bottom: .7rem; margin-bottom: 1.35rem;
+    border-bottom: 2px solid var(--line);
+  }
+  .line-head h3 {
+    font-size: var(--step-2); letter-spacing: .05em; text-transform: uppercase; color: var(--ink);
+  }
+  .line-head .buyer { font-family: var(--f-mono); font-size: .72rem; color: var(--ink-faint); }
+  .line-head .count {
+    margin-left: auto; font-family: var(--f-mono); font-size: .72rem; color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cards { display: grid; gap: .85rem; grid-template-columns: 1fr; }
+  @media (min-width: 680px) { .cards { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1020px) { .cards { grid-template-columns: 1fr 1fr 1fr; } }
+
+  .card {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--slate);
+    border-radius: 4px;
+    padding: 1rem 1.05rem 0.9rem;
+    display: flex; flex-direction: column; gap: .5rem;
+    box-shadow: var(--shadow);
+  }
+  .card.s-base { border-left-color: var(--ok); }
+  .card.s-writ { border-left-color: var(--ok); }
+  .card.s-allo { border-left-color: var(--slate); }
+  .card.s-blok { border-left-color: var(--rust); }
+
+  .card .nm {
+    font-family: var(--f-display);
+    font-size: 1.35rem; line-height: 1.05;
+    letter-spacing: .045em; text-transform: uppercase; color: var(--ink);
+  }
+  .card .tag { font-size: .8125rem; color: var(--amber); line-height: 1.4; font-weight: 500; }
+  .card .desc { font-size: .8125rem; color: var(--ink-dim); line-height: 1.55; flex: 1; }
+  .card .foot {
+    display: flex; flex-wrap: wrap; align-items: center; gap: .4rem;
+    margin-top: .35rem; padding-top: .65rem; border-top: 1px solid var(--line-soft);
+    font-family: var(--f-mono); font-size: .66rem; color: var(--ink-faint);
+  }
+  .chip {
+    display: inline-block; padding: .12rem .4rem; border-radius: 3px;
+    letter-spacing: .06em; text-transform: uppercase; font-size: .62rem;
+  }
+  .chip.base { color: var(--ok);    background: var(--ok-bg); }
+  .chip.writ { color: var(--ok);    background: var(--ok-bg); }
+  .chip.allo { color: var(--slate); background: var(--slate-bg); }
+  .chip.blok { color: var(--rust);  background: var(--rust-bg); }
+  .foot .sep { color: var(--line); }
+  .foot .cls { color: var(--cyan); }
+  .card .flagline {
+    font-family: var(--f-mono); font-size: .66rem; line-height: 1.5;
+    color: var(--rust); border-top: 1px dashed var(--rust);
+    padding-top: .5rem; margin-top: .1rem;
+  }
+
+  /* ---- tables ---- */
+  .tbl-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: .8125rem; }
+  th, td { text-align: left; padding: .7rem .9rem; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  thead th {
+    font-family: var(--f-mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-faint); background: var(--surface-2); border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.mono { font-family: var(--f-mono); font-size: .75rem; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
+  td strong { color: var(--ink); font-weight: 600; }
+  td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; color: var(--amber); font-size: 1rem; }
+  td.free { font-family: var(--f-mono); font-variant-numeric: tabular-nums; color: var(--ok); font-size: 1rem; }
+
+  /* ---- callout ---- */
+  .callout {
+    border: 1px solid var(--amber);
+    border-left-width: 3px;
+    background: linear-gradient(180deg, var(--amber-bg), transparent);
+    border-radius: 4px;
+    padding: 1.35rem 1.5rem;
+    display: flex; flex-direction: column; gap: .7rem;
+    margin-top: 2rem;
+  }
+  .callout .ctitle {
+    font-family: var(--f-display); font-size: 1.2rem; letter-spacing: .03em;
+    text-transform: uppercase; color: var(--amber);
+  }
+  .callout p { color: var(--ink-dim); max-width: 74ch; line-height: 1.6; }
+  .callout strong { color: var(--ink); }
+
+  /* ---- risk list ---- */
+  .risks { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+  @media (min-width: 800px) { .risks { grid-template-columns: 1fr 1fr; } }
+  .risk {
+    border: 1px solid var(--line); border-top: 3px solid var(--rust);
+    border-radius: 4px; background: var(--surface); padding: 1.1rem;
+    display: flex; flex-direction: column; gap: .55rem;
+  }
+  .risk.crit { border-top-width: 5px; }
+  .risk h4 {
+    font-family: var(--f-display); font-size: 1.1rem; margin: 0;
+    letter-spacing: .04em; text-transform: uppercase; color: var(--ink);
+  }
+  .risk .cite { font-family: var(--f-mono); font-size: .68rem; color: var(--rust); letter-spacing: .06em; }
+  .risk p { font-size: .8125rem; color: var(--ink-dim); line-height: 1.55; }
+  .risk .calc {
+    font-family: var(--f-mono); font-size: .72rem; color: var(--ink);
+    background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 3px; padding: .6rem .7rem; line-height: 1.6;
+    overflow-x: auto; white-space: pre;
+  }
+
+  /* ---- naming register ---- */
+  .families { display: grid; gap: 1.15rem; grid-template-columns: 1fr; margin-top: .5rem; }
+  @media (min-width: 800px) { .families { grid-template-columns: repeat(3, 1fr); } }
+  .fam {
+    border: 1px solid var(--line); border-radius: 4px; background: var(--surface);
+    padding: 1.15rem; display: flex; flex-direction: column; gap: .6rem;
+  }
+  .fam .fname {
+    font-family: var(--f-display); font-size: 1.05rem; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--cyan);
+  }
+  .fam .frule { font-size: .8125rem; color: var(--ink-dim); line-height: 1.55; }
+  .fam .fmembers {
+    font-family: var(--f-mono); font-size: .72rem; color: var(--ink-faint);
+    line-height: 1.7; border-top: 1px solid var(--line-soft); padding-top: .6rem;
+  }
+
+  /* ---- artifact list ---- */
+  .arts { display: grid; gap: .85rem; grid-template-columns: 1fr; }
+  @media (min-width: 760px) { .arts { grid-template-columns: 1fr 1fr; } }
+  .art {
+    border: 1px solid var(--line); border-radius: 4px; background: var(--surface);
+    padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: .4rem;
+  }
+  .art .apath {
+    font-family: var(--f-mono); font-size: .74rem; color: var(--cyan); word-break: break-all;
+  }
+  .art .adesc { font-size: .8125rem; color: var(--ink-dim); line-height: 1.55; }
+
+  /* ---- footer ---- */
+  footer { padding: 3rem 0 4rem; color: var(--ink-faint); font-size: .8125rem; }
+  footer .fgrid { display: flex; flex-direction: column; gap: 1rem; max-width: 74ch; }
+  footer strong { color: var(--ink-dim); font-weight: 600; }
+  footer .rule { height: 1px; background: var(--line); margin-bottom: 2rem; }
+
+  a { color: var(--cyan); }
+  a:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; border-radius: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<header class="mast">
+  <div class="wrap mast-grid">
+    <div>
+      <p class="eyebrow">Application Layer / Overlay Catalog / Revision 2</p>
+      <h1 class="wordmark">Stryne<span class="x">x</span></h1>
+    </div>
+
+    <p class="mast-sub">Twenty-six named capabilities on top of an open specification we give away.</p>
+
+    <p class="mast-thesis">
+      O-CPS is published royalty-free, patent-non-asserting, and hands governance to a
+      standards body at v1.0. Per the NOTICE file, <strong>the trademark is the only asset
+      not licensed</strong>. That makes this catalog the commercial architecture, not a
+      naming exercise: the specification is the giveaway, and the branded layer above it
+      is the thing that stays.
+    </p>
+
+    <div class="meta-strip">
+      <span><b>Spec basis</b> O-CPS v0.2, April 2026</span>
+      <span><b>Overlays</b> 26 across 4 product lines</span>
+      <span><b>Code points</b> allocated for all of them</span>
+      <span><b>New message classes required</b> 0</span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">01 / The split</p>
+      <h2>Five layers open. One layer owned.</h2>
+      <div class="prose">
+        <p>
+          The stack below is §5.1 of the specification, unmodified. Every layer from the
+          radio up to the message set is deliberately unowned: it reuses C-V2X, ITS-G5,
+          SAE J2735, IEEE 1609.2, and ETSI TS 103 324, and it is licensed so that any
+          automaker, supplier, or municipality can implement it without asking permission.
+          That is the adoption strategy and it should not be diluted.
+        </p>
+        <p>
+          The application layer is the exception. §1.2 already carves it out: a vehicle
+          may claim O-CPS conformance without implementing any Strynex overlay. Everything
+          in this catalog lives in that top band.
+        </p>
+      </div>
+    </div>
+
+    <div class="split">
+      <div>
+        <div class="stack">
+          <div class="layer owned">
+            <span class="lname">Application</span>
+            <span class="lbody">26 Strynex overlays &middot; trademark retained &middot; this document</span>
+          </div>
+          <div class="layer">
+            <span class="lname">Perception &amp; Fusion</span>
+            <span class="lbody">Normalized profile &middot; world model &middot; trust weights</span>
+          </div>
+          <div class="layer">
+            <span class="lname">Message</span>
+            <span class="lbody">PerceptionSummary &middot; Intent &middot; GroupState &middot; Attestation &middot; Telemetry</span>
+          </div>
+          <div class="layer">
+            <span class="lname">Security</span>
+            <span class="lbody">IEEE 1609.2 &middot; ETSI TS 103 097 &middot; SCMS / C-ITS PKI &middot; MBD</span>
+          </div>
+          <div class="layer">
+            <span class="lname">Transport</span>
+            <span class="lbody">BTP + GeoNetworking &middot; PC5 sidelink</span>
+          </div>
+          <div class="layer">
+            <span class="lname">PHY / MAC</span>
+            <span class="lbody">C-V2X PC5 &middot; ITS-G5 802.11p/bd</span>
+          </div>
+        </div>
+        <div class="stack-legend">
+          <span class="swatch"><i></i> Open specification, CC BY 4.0 and Apache 2.0</span>
+          <span class="swatch own"><i></i> Trademark retained, licensed separately</span>
+        </div>
+      </div>
+
+      <div class="ledger">
+        <div class="ledger-row">
+          <span class="k">What the spec gives away</span>
+          <span class="v">The wire</span>
+          <span class="n">
+            Message formats, the perception profile, the trust framework, the C-ACC Group
+            Protocol, the conformance classes, and now the extension mechanism that lets
+            anyone build overlays of their own. Free to implement, headed to an external
+            standards body at v1.0.
+          </span>
+        </div>
+        <div class="ledger-row hot">
+          <span class="k">What Strynex keeps</span>
+          <span class="v">The names and the mark</span>
+          <span class="n">
+            The overlay behaviors, the trust-weighting implementation §6.5 leaves open, the
+            reference implementation, and the right to say a product is Strynex. Anyone may
+            implement the profile. Nobody else may use the name on the result.
+          </span>
+        </div>
+        <div class="ledger-row">
+          <span class="k">Why the split holds</span>
+          <span class="v">Adoption pays the mark</span>
+          <span class="n">
+            Every additional O-CPS implementation increases the population a Strynex overlay
+            can coordinate with. Giving away the substrate is what makes the layer above it
+            worth licensing. Wi-Fi Alliance, USB-IF, and Bluetooth SIG all run this shape.
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">02 / The catalog</p>
+      <h2>Twenty-six overlays, four product lines, one buyer each.</h2>
+      <div class="prose">
+        <p>
+          Product lines are drawn by <strong>who signs the purchase order</strong>, not by
+          technical similarity. An OEM, a city, a fleet, and a certification program buy on
+          different cycles, through different procurement, against different budgets.
+        </p>
+        <p>
+          Each card names the open extension profile it rides on, the conformance class it
+          needs from §16.1, and honest status.
+          <span style="color:var(--ok)">Base</span> means it needs no new code points at all
+          and is buildable on v0.2 as written.
+          <span style="color:var(--ok)">Written</span> means the profile specification exists.
+          <span style="color:var(--slate)">Allocated</span> means code points are reserved
+          and the profile is unwritten.
+          <span style="color:var(--rust)">Blocked</span> means something has to be resolved
+          first, and the card says what.
+        </p>
+      </div>
+    </div>
+
+    <!-- ============ DRIVE ============ -->
+    <div class="line-block">
+      <div class="line-head">
+        <h3>Strynex Drive</h3>
+        <span class="buyer">Buyer: OEM, tier-one supplier, aftermarket</span>
+        <span class="count">10 overlays</span>
+      </div>
+      <div class="cards">
+
+        <article class="card s-base">
+          <span class="nm">Slipstream</span>
+          <span class="tag">Driver-authorized platooning</span>
+          <span class="desc">The existing overlay. Explicit group formation, synchronized gap targets, leader handoff, and a group voice channel. Every follower inherits the leader's forward horizon, extending effective sensor range by 100 to 400 metres.</span>
+          <div class="foot"><span class="chip base">Base</span><span class="sep">/</span><span>GroupState</span><span class="sep">/</span><span class="cls">Class B</span><span class="sep">/</span><span>&sect;12.2</span></div>
+        </article>
+
+        <article class="card s-allo">
+          <span class="nm">Cadence</span>
+          <span class="tag">Signal-tempo speed advisory</span>
+          <span class="desc">Reads SPaT from intersection RSUs and paces the vehicle to arrive in the green phase. The inverse case matters more: coasting to a red instead of accelerating into it removes a full stop-and-launch cycle from the fuel and brake budget.</span>
+          <div class="foot"><span class="chip allo">Allocated</span><span class="sep">/</span><span>EP-0003</span><span class="sep">/</span><span class="cls">Class B</span></div>
+        </article>
+
+        <article class="card s-base">
+          <span class="nm">Parallax</span>
+          <span class="tag">See-through perception</span>
+          <span class="desc">The core promise, named. An object hidden behind a box truck is rendered from a peer's viewpoint into your world model, trust-weighted and confidence-scored. Two viewpoints resolve what one cannot, which is what the word means.</span>
+          <div class="foot"><span class="chip base">Base</span><span class="sep">/</span><span>PerceptionSummary</span><span class="sep">/</span><span class="cls">Class A</span><span class="sep">/</span><span>&sect;11</span></div>
+        </article>
+
+        <article class="card s-allo">
+          <span class="nm">Sightline</span>
+          <span class="tag">Degraded-sensor continuity</span>
+          <span class="desc">Fog, whiteout, heavy spray, low sun straight into the camera array. When your own sensors drop confidence, the world model is held up on peers' sensors instead of collapsing. Consumes the SensorHealth already carried in Attestation.</span>
+          <div class="foot"><span class="chip allo">Allocated</span><span class="sep">/</span><span>EP-0010</span><span class="sep">/</span><span class="cls">Class B</span></div>
+        </article>
+
+        <article class="card s-writ">
+          <span class="nm">Interlace</span>
+          <span class="tag">Negotiated zipper merge</span>
+          <span class="desc">A lane drop resolved by agreed ordering rather than by a race to the cone. The MERGE intent code existed in Appendix A.3 with no protocol behind it. The profile that closes that gap is now written, including the rule that a yield is never a guarantee.</span>
+          <div class="foot"><span class="chip writ">Written</span><span class="sep">/</span><span>EP-0002</span><span class="sep">/</span><span class="cls">Class B</span></div>
+        </article>
+
+        <article class="card s-allo">
+          <span class="nm">Breakwater</span>
+          <span class="tag">Stop-and-go wave absorption</span>
+          <span class="desc">Phantom jams are shockwaves traveling backward through traffic. A vehicle that opens a gap and absorbs the wave stops transmitting it to everyone behind. Published ring-road experiments damped stop-and-go waves with roughly one controlled vehicle in twenty.</span>
+          <div class="foot"><span class="chip allo">Allocated</span><span class="sep">/</span><span>EP-000C</span><span class="sep">/</span><span class="cls">Class A</span></div>
+        </article>
+
+        <article class="card s-blok">
+          <span class="nm">Wingman</span>
+          <span class="tag">Motorcycle conspicuity</span>
+          <span class="desc">Two-wheelers disappear into radar clutter and get killed by unprotected left turns across their path. The profile is allocated and cannot be written yet: the base trust arithmetic forbids a conformant receiver from acting on the beacon it depends on.</span>
+          <div class="foot"><span class="chip blok">Blocked</span><span class="sep">/</span><span>EP-0006</span><span class="sep">/</span><span class="cls">Class A</span></div>
+          <p class="flagline">Blocked by erratum E-03. See &sect;04.</p>
+        </article>
+
+        <article class="card s-allo">
+          <span class="nm">Cairn</span>
+          <span class="tag">Positioning without satellites</span>
+          <span class="desc">Tunnels, urban canyons, multi-storey garages. Peers and RSUs at known poses become the reference frame when GNSS is gone. §13.4 requires a secondary time source for GNSS-denied operation and specifies no cooperative positioning to go with it.</span>
+          <div class="foot"><span class="chip allo">Allocated</span><span class="sep">/</span><span>EP-0004</span><span class="sep">/</span><span class="cls">Class B</span></div>
+        </article>
+
+        <article class="card s-allo">
+          <span class="nm">Riptide</span>
+          <span class="tag">Wrong-way driver detection</span>
+          <span class="desc">Heading checked against MAP topology identifies a wrong-way vehicle in one message, well before anyone has line of sight. The alert propagates upstream to every vehicle in the path. Rare event, catastrophic outcome, cheap to detect with what already exists.</span>
+          <div class="foot"><span class="chip allo">Allocated</span><span class="sep">/</span><span>EP-000B</span><span class="sep">/</span><span class="cls">Class I</span></div>
+        </article>
+
+        <article class="card s-base">
+          <span class="nm">Flotsam</span>
+          <span class="tag">Debris and stopped-vehicle reporting</span>
+          <span class="desc">The ladder in lane two, the deer on the shoulder, the disabled car past a blind crest. Rides the existing HAZARD_FLAG telemetry kind, whose payload encoding is now drafted. Extended hazard taxonomy beyond the base twelve types is EP-0011.</span>
+          <div class="foot"><span class="chip base">Base</span><span class="sep">/</span><span>Telemetry</span><span class="sep">/</span><span class="cls">Class A</span></div>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- ============ CIVIC ============ -->
+    <div class="line-block">
+      <div class="line-head">
+        <h3>Strynex Civic</h3>
+        <span class="buyer">Buyer: city DOT, state DOT, transit authority, school district</span>
+        <span class="count">8 overlays</span>
+      </div>
+      <div class="cards">
+
+        <article class="card s-allo">
+          <span class="nm">Metronome</span>
+          <span class="tag">Demand-aware signal coordination</span>
+          <span class="desc">The city-side counterpart to Cadence, and the same open profile seen from the other end. Signal phase timed against actual declared Intent from approaching vehicles rather than inductive loops that only see a car once it has already stopped.</span>
+          <div class="foot"><span class="chip allo">Allocated</span><span class="sep">/</span><span>EP-0003</span><span class="sep">/</span><span class="cls">Class I</span></div>
+        </article>
+
+        <article class="card s-allo">
+          <span class="nm">Clearway</span>
+          <span class="tag">Emergency vehicle preemption</span>
+          <span class="desc">Signals flip and traffic pre-diverts blocks ahead of the apparatus, not at the intersection it is already entering. The hard part is not the routing, it is authorization: a priority claim anyone can assert is a corridor denial-of-service weapon.</span>
+          <div class="foot"><span class="chip allo">Allocated</span><span class="sep">/</span><span>EP-0005</span><span class="sep">/</span><span class="cls">Class I</span></div>
+          <p class="flagline">Security design precedes the profile. See &sect;04.</p>
+        </article>
+
+        <article class="card s-allo">
+          <span class="nm">Cordon</span>
+          <span class="tag">Responder scene protection</span>
+          <span class="desc">A moving protective envelope around crews working the shoulder. Move-over laws depend on a driver noticing; a cordon does not. Fire services and state patrol buy this on the strength of their own line-of-duty statistics.</span>
+          <div class="foot"><span class="chip allo">Allocated</span><span class="sep">/</span><span>EP-000A</span><span class="sep">/</span><span class="cls">Class B</span></div>
+        </article>
+
+        <article class="card s-allo">
+          <span class="nm">Crossguard</span>
+          <span class="tag">School bus and school zone</span>
+          <span class="desc">The bus broadcasts STOP while the arm is out and children are crossing. Every approaching vehicle gets an advisory that does not depend on seeing the flashing lights. Distinct product because the buyer is a school district, not a DOT.</span>
+          <div class="foot"><span class="chip allo">Allocated</span><span class="sep">/</span><span>EP-0009</span><span class="sep">/</span><span class="cls">Class B</span></div>
+          <p class="flagline">Pedestrian advisories affected by E-03. See &sect;04.</p>
+        </article>
+
+        <article class="card s-allo">
+          <span class="nm">Crossbuck</span>
+          <span class="tag">Grade crossing awareness</span>
+          <span class="desc">An RSU at the rail crossing broadcasts train presence and gate state to approaching vehicles. Named for the X-shaped sign already standing at every crossing in the country, which is the point: the driver already knows what the word means.</span>
+          <div class="foot"><span class="chip allo">Allocated</span><span class="sep">/</span><span>EP-0008</span><span class="sep">/</span><span class="cls">Class I</span></div>
+        </article>
+
+        <article class="card s-allo">
+          <span class="nm">Flagger</span>
+          <span class="tag">Work zone projection</span>
+          <span class="desc">Portable RSUs project the zone 400 metres upstream, broadcast MAP deltas for the shifted lanes, and carry workers on foot as high-confidence tracks. §15.3 gives the scenario and gap-widening rules; the messages that carry it were never encoded.</span>
+          <div class="foot"><span class="chip allo">Allocated</span><span class="sep">/</span><span>EP-0007</span><span class="sep">/</span><span class="cls">Class I</span></div>
+        </article>
+
+        <article class="card s-allo">
+          <span class="nm">Braid</span>
+          <span class="tag">Network-scale pre-diversion</span>
+          <span class="desc">An incident is detected and the corridor splits flow across parallel routes before the queue forms, rather than after a navigation app notices congestion that already exists. Braid is to a network what Breakwater is to a single lane.</span>
+          <div class="foot"><span class="chip allo">Allocated</span><span class="sep">/</span><span>EP-000D</span><span class="sep">/</span><span class="cls">Class I</span></div>
+        </article>
+
+        <article class="card s-base">
+          <span class="nm">Groundtruth</span>
+          <span class="tag">Road surface state as a data product</span>
+          <span class="desc">Friction, black ice, standing water, and pothole locations from wheel slip and ABS events across a fleet. Rides the existing friction and weather telemetry kinds, whose payloads are now drafted with quantized position so aggregation cannot rebuild a trace.</span>
+          <div class="foot"><span class="chip base">Base</span><span class="sep">/</span><span>Telemetry</span><span class="sep">/</span><span class="cls">Class A</span></div>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- ============ FLEET ============ -->
+    <div class="line-block">
+      <div class="line-head">
+        <h3>Strynex Fleet</h3>
+        <span class="buyer">Buyer: carrier, logistics operator, transit fleet, insurer</span>
+        <span class="count">4 overlays</span>
+      </div>
+      <div class="cards">
+
+        <article class="card s-base">
+          <span class="nm">Slipstream Haul</span>
+          <span class="tag">Freight platooning tier</span>
+          <span class="desc">Three to six trucks at highway speed, the §15.2 reference scenario. The specification deliberately declines to claim the fuel benefit and rests on safety and anticipation. The commercial tier is allowed to quantify what the standard will not.</span>
+          <div class="foot"><span class="chip base">Base</span><span class="sep">/</span><span>GroupState</span><span class="sep">/</span><span class="cls">Class B</span><span class="sep">/</span><span>&sect;15.2</span></div>
+        </article>
+
+        <article class="card s-base">
+          <span class="nm">Dispatch</span>
+          <span class="tag">Fleet conformance and health console</span>
+          <span class="desc">Which units still hold valid attestation, which sensors are drifting, which trucks would fail a conformance audit tomorrow. Built from Attestation and the signed V-DIAG records of §5.3. The unglamorous product that renews every year.</span>
+          <div class="foot"><span class="chip base">Base</span><span class="sep">/</span><span>Attestation + V-DIAG</span><span class="sep">/</span><span class="cls">Class B</span></div>
+        </article>
+
+        <article class="card s-allo">
+          <span class="nm">Marshal</span>
+          <span class="tag">Low-speed cooperative maneuvering</span>
+          <span class="desc">Yards, depots, loading docks, and parking structures. Backing out of a blind bay using a peer's view of the aisle, and holding position where GNSS does not reach. Named for the person who directs vehicles on the ground, because that is the job.</span>
+          <div class="foot"><span class="chip allo">Allocated</span><span class="sep">/</span><span>EP-000E</span><span class="sep">/</span><span class="cls">Class A</span></div>
+        </article>
+
+        <article class="card s-base">
+          <span class="nm">Affidavit</span>
+          <span class="tag">Signed incident reconstruction</span>
+          <span class="desc">§5.3 already has V-DIAG emitting signed diagnostic records for fleet-owner retrieval. Cryptographically signed, tamper-evident evidence of what a vehicle perceived and advised in the seconds before a collision is a product insurers will pay for.</span>
+          <div class="foot"><span class="chip base">Base</span><span class="sep">/</span><span>V-DIAG</span><span class="sep">/</span><span class="cls">Class B</span></div>
+          <p class="flagline">Privacy review required before scoping. See &sect;04.</p>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- ============ ASSURANCE ============ -->
+    <div class="line-block">
+      <div class="line-head">
+        <h3>Strynex Assurance</h3>
+        <span class="buyer">Buyer: everyone above, plus regulators</span>
+        <span class="count">4 overlays</span>
+      </div>
+      <div class="cards">
+
+        <article class="card s-base">
+          <span class="nm">Assay</span>
+          <span class="tag">The trust engine</span>
+          <span class="desc">§6.5 requires trust-weighted fusion and then states the weighting function is implementation-defined. That sentence is the single largest commercial opening in the specification: the standard mandates the behavior and declines to say how. Assay is how.</span>
+          <div class="foot"><span class="chip base">Base</span><span class="sep">/</span><span>Fusion layer</span><span class="sep">/</span><span class="cls">Class B</span><span class="sep">/</span><span>&sect;6.5</span></div>
+        </article>
+
+        <article class="card s-base">
+          <span class="nm">Veil</span>
+          <span class="tag">Privacy enforcement</span>
+          <span class="desc">Pseudonym rotation scheduling, butterfly-key unlinkability across epochs, retention-limit enforcement, and the automated prohibited-field scan §16.3 already requires, now extended to cover extension payloads so they cannot become a smuggling route.</span>
+          <div class="foot"><span class="chip base">Base</span><span class="sep">/</span><span>Security layer</span><span class="sep">/</span><span class="cls">Class A</span><span class="sep">/</span><span>&sect;10</span></div>
+        </article>
+
+        <article class="card s-base">
+          <span class="nm">Hallmark</span>
+          <span class="tag">Conformance certification and mark</span>
+          <span class="desc">Test against the reference suite, earn the badge, put it on the box. §16.3 defines seven test categories and v1.0 promises a public conformance registry. This is the revenue line that outlives the governance transfer, because the mark does not transfer with it.</span>
+          <div class="foot"><span class="chip base">Base</span><span class="sep">/</span><span>Program</span><span class="sep">/</span><span>&sect;16.3, &sect;19</span></div>
+        </article>
+
+        <article class="card s-blok">
+          <span class="nm">Nightwatch</span>
+          <span class="tag">Cooperative stationary awareness</span>
+          <span class="desc">Parked vehicles as a cooperative sensing mesh in lots and garages. Listed because it keeps getting asked for, and named so the conversation has a handle. Deliberately withheld from the registry rather than allocated, so nobody starts building against it.</span>
+          <div class="foot"><span class="chip blok">Withheld</span><span class="sep">/</span><span>No allocation</span><span class="sep">/</span><span class="cls">Class A</span></div>
+          <p class="flagline">Not conformant with &sect;10.3 and &sect;10.5. See &sect;04.</p>
+        </article>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">03 / The mechanism</p>
+      <h2>The code points are reserved. That was the part with a deadline.</h2>
+      <div class="prose">
+        <p>
+          Twenty-six overlays were mapped against the message layer of §8 and
+          <strong>none of them requires a sixth message class</strong>. PerceptionSummary,
+          Intent, GroupState, Attestation, and Telemetry carry all of it. Better still,
+          <strong>ten of the twenty-six need no allocation at all</strong>: they are products
+          built on v0.2 as written, or on the parts of it the specification deliberately
+          leaves implementation-defined.
+        </p>
+        <p>
+          What the other sixteen consume is enum code point space, and §19 freezes the wire
+          format at v1.0 while §18.4 transfers governance at the same moment. A range not
+          reserved before then cannot be reserved after without a new wire version, and the
+          decision moves to a committee. So the ranges are now reserved, the partitions are
+          written, and the registry is machine-readable and validated.
+        </p>
+      </div>
+    </div>
+
+    <div class="tbl-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Extension point</th>
+            <th>Partition reserved</th>
+            <th class="num" style="color:var(--ink-faint)">Allocated</th>
+            <th class="free" style="color:var(--ink-faint)">Still free</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>IntentCode</strong></td>
+            <td class="mono">64&ndash;191 profile, 192&ndash;254 vendor, 255 sentinel</td>
+            <td class="num">9</td>
+            <td class="free">7</td>
+            <td class="mono">Blocks of 8. v0.2 assigned 0&ndash;11, so 12&ndash;63 held for core.</td>
+          </tr>
+          <tr>
+            <td><strong>TelemetryKind</strong></td>
+            <td class="mono">32&ndash;127 profile, 128&ndash;254 vendor, 255 sentinel</td>
+            <td class="num">7</td>
+            <td class="free">5</td>
+            <td class="mono">v0.2 assigned 0&ndash;4, so 5&ndash;31 held for core.</td>
+          </tr>
+          <tr>
+            <td><strong>Object class ID</strong></td>
+            <td class="mono">0x40&ndash;0xBF profile, 0xC0&ndash;0xFE vendor</td>
+            <td class="num">3</td>
+            <td class="free">26</td>
+            <td class="mono">Sub-allocates the range &sect;7.2 already reserved. 0xFF unchanged.</td>
+          </tr>
+          <tr>
+            <td><strong>Profile identifiers</strong></td>
+            <td class="mono">0x0001&ndash;0x00FF core, 0x0100&ndash;0x0FFF registered</td>
+            <td class="num">17</td>
+            <td class="free">238</td>
+            <td class="mono">Core allocations are open and free to implement.</td>
+          </tr>
+          <tr>
+            <td><strong>Vendor block</strong></td>
+            <td class="mono">0x1000&ndash;0x7FFF, blocks of 256</td>
+            <td class="num">1</td>
+            <td class="free">111</td>
+            <td class="mono">One block held by Specter Point. Privately administered.</td>
+          </tr>
+          <tr>
+            <td><strong>New message classes</strong></td>
+            <td class="mono">n/a</td>
+            <td class="num" style="color:var(--ok)">0</td>
+            <td class="free">n/a</td>
+            <td class="mono">&sect;8 message layer stands as written.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <span class="ctitle">Safe ignore is what makes this publishable</span>
+      <p>
+        The framework's central rule is that <strong>every profile must be safely
+        ignorable</strong>. A receiver that discards all extension content and processes
+        only the base message must be left in a correct and safe state. Two conformant
+        participants that share no profiles still exchange perception, intent, group state
+        and telemetry correctly. Profiles can never fragment the population, which is the
+        property that lets the mechanism be given away without weakening the standard.
+      </p>
+      <p>
+        It was measured rather than asserted. An Intent carrying an unallocated code
+        round-trips byte-identically with every other field intact, because proto3 enums are
+        open. So the wire layer gives safe ignore for free, and mapping an unrecognised
+        value to UNKNOWN is an application obligation, not something the decoder does. Only
+        the application failure is invisible from the wire, which is exactly where the
+        conformance suite has to look.
+      </p>
+      <p>
+        Seven prohibitions bound what a profile may do. It may not define a message class,
+        raise an ASIL allocation, lower a safety threshold, route around the §13.1 ADAS
+        authority, extend retention past §10.3, require cloud connectivity in a safety path,
+        or make itself a prerequisite for base conformance. Those seven lines are what make
+        a privately administered vendor block safe to hand out.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">04 / Where it breaks</p>
+      <h2>One safety defect, and three things that need a decision before they need engineering.</h2>
+      <div class="prose">
+        <p>
+          Stated up front rather than discovered in review. The first of these is a defect
+          in the specification itself, found by reading its own arithmetic against its own
+          worked example. It is the most important item on this page.
+        </p>
+      </div>
+    </div>
+
+    <div class="risks">
+      <div class="risk crit">
+        <h4>E-03 &middot; VRU tracks cannot raise an advisory</h4>
+        <span class="cite">Critical &middot; &sect;11.3 &middot; &sect;11.4 &middot; &sect;15.4 &middot; &sect;7.3</span>
+        <p>
+          §15.4 promises that vehicles fuse pedestrian and cyclist beacons "as flagged
+          vulnerable tracks, weighted appropriately." Four clauses then combine to forbid
+          acting on them:
+        </p>
+        <div class="calc">w = w_cert x w_attest x w_history x w_conf
+  = 1.0    x 0.5      x 1.0       x 0.498
+  = 0.249      against a threshold of 0.5</div>
+        <p>
+          Class A gets 0.5 for attestation it cannot transmit. §15.4 specifies LOW-to-MEDIUM
+          confidence and §7.3 caps MEDIUM at 127 of 255. The product falls below the §11.4
+          advisory threshold, so a conformant receiver may display a pedestrian beacon and
+          may do nothing else with it.
+        </p>
+        <p>
+          The failure is inverted with respect to risk. Where the vehicle already sees the
+          pedestrian, its own track clears the threshold and the beacon adds nothing. Where
+          the pedestrian is occluded, which is the only case where the beacon carries
+          information the vehicle lacks, the beacon is the sole contributor and is muted.
+          <strong>A narrow, bounded exception is drafted and needs a functional-safety
+          reviewer, not an owner sign-off.</strong>
+        </p>
+      </div>
+
+      <div class="risk">
+        <h4>Nightwatch</h4>
+        <span class="cite">&sect;10.3 &middot; &sect;10.5</span>
+        <p>
+          A parking-lot security product is only useful if it remembers. §10.3 caps
+          PerceptionSummary retention at 60 seconds with no exception, and §10.5 prohibits
+          constructing long-term movement traces. There is no conformant version that
+          retains anything.
+        </p>
+        <p>
+          It is now recorded in the registry as deliberately withheld rather than allocated,
+          with the reason attached, so nobody starts building against a code point that
+          implies it is coming. Either the overlay is scoped down to live proximity
+          awareness with no memory, or it moves outside O-CPS entirely. That is an owner
+          decision about the privacy model, not an engineering one.
+        </p>
+      </div>
+
+      <div class="risk">
+        <h4>Affidavit</h4>
+        <span class="cite">&sect;10.3 &middot; &sect;10.5</span>
+        <p>
+          V-DIAG records are explicitly permitted and explicitly must not expose externally
+          transmitted message contents. A reconstruction product that replays what peers
+          transmitted is retaining others' PerceptionSummary well past 60 seconds.
+        </p>
+        <p>
+          A version limited strictly to the vehicle's own perception and its own advisory
+          outputs is defensible. The distinction has to be drawn before anyone scopes it,
+          not during a discovery request.
+        </p>
+      </div>
+
+      <div class="risk">
+        <h4>Clearway</h4>
+        <span class="cite">Authorization, unspecified</span>
+        <p>
+          Not a privacy conflict, a trust one. A priority claim that any participant can
+          assert is a tool for shutting down a corridor. This needs an authorization model
+          tied to enrollment credentials, which is precisely the linkage §10.5 restricts.
+        </p>
+        <p>
+          The profile is allocated with a standing warning attached rather than queued as
+          ordinary work. Solvable, and among the more interesting problems in the catalog,
+          but it is security design before it is a feature.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">05 / What exists</p>
+      <h2>The mechanism is written. The overlays are allocated, not built.</h2>
+      <div class="prose">
+        <p>
+          Repository paths, for anyone with access. None of it amends the v0.2 text, which
+          remains a verbatim conversion of the source whitepaper. Everything below is
+          proposed and needs an owner decision before adoption.
+        </p>
+      </div>
+    </div>
+
+    <div class="arts">
+      <div class="art">
+        <span class="apath">docs/errata-v0.2.md</span>
+        <span class="adesc">Eight verified defects, each with quoted evidence, the consequence, and drop-in replacement text. One critical, six major, one minor. Adoption order at the end.</span>
+      </div>
+      <div class="art">
+        <span class="apath">profiles/EP-0000-extension-profile-framework.md</span>
+        <span class="adesc">Identifier ranges, enum partitions, the ExtensionBlock carrier, receiver obligations, the seven prohibitions, and the clause that carries the registry through the governance transfer.</span>
+      </div>
+      <div class="art">
+        <span class="apath">profiles/registry.yaml</span>
+        <span class="adesc">Machine-readable allocations, source of truth for code points. Validated: parses clean, no block collisions across any of the three enum spaces.</span>
+      </div>
+      <div class="art">
+        <span class="apath">profiles/README.md</span>
+        <span class="adesc">The registry index and the full overlay map: every one of the 26 against the profile it requires, and the ten that require nothing.</span>
+      </div>
+      <div class="art">
+        <span class="apath">profiles/EP-0001-intersection-assist.md</span>
+        <span class="adesc">Written in full. Discharges the profile §12.3 defers and the roadmap owes at v0.4. Red-light runners, blind cross-traffic, unprotected left conflicts.</span>
+      </div>
+      <div class="art">
+        <span class="apath">profiles/EP-0002-merge-negotiation.md</span>
+        <span class="adesc">Written in full. Closes the v0.2 gap where MERGE existed with no protocol. Its central rule: a received yield is never evidence that a gap exists.</span>
+      </div>
+      <div class="art">
+        <span class="apath">schemas/proposed/v0.3/</span>
+        <span class="adesc">Additive schema changes, kept out of the verbatim Appendix A tree. Compiles under libprotoc 35.1 alone and alongside the existing schemas, with no name collisions.</span>
+      </div>
+      <div class="art">
+        <span class="apath">schemas/proposed/v0.3/proto/ocps/v2/telemetry_payloads.proto</span>
+        <span class="adesc">Encodings for all four TelemetryKind values, undefined in v0.2 and quietly blocking the PCAP corpus. Position quantized so metro-scale aggregation cannot rebuild a movement trace.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">06 / The register</p>
+      <h2>The names are a system, so the next twenty write themselves.</h2>
+      <div class="prose">
+        <p>
+          One rule governs the whole family: <strong>the name describes what the physical
+          world does, never what the software does</strong>. Physical names survive
+          translation, do not date the way technology words do, and cannot be diluted by a
+          competitor shipping the same feature under a generic term. There is no Smart,
+          Auto, Pro, Plus, or Assist anywhere in the catalog.
+        </p>
+      </div>
+    </div>
+
+    <div class="families">
+      <div class="fam">
+        <span class="fname">Water and flow</span>
+        <span class="frule">Anything treating traffic as a fluid: waves, currents, channels, and what moves through them. Slipstream set this register and the rest follow it.</span>
+        <span class="fmembers">Slipstream &middot; Breakwater &middot; Riptide &middot; Flotsam &middot; Braid &middot; Interlace</span>
+      </div>
+      <div class="fam">
+        <span class="fname">The road trades</span>
+        <span class="frule">Anything replacing or extending a human role already standing on the roadway. Named for the person doing the job, so a driver, a city engineer, and a fire captain all read it the same way.</span>
+        <span class="fmembers">Flagger &middot; Crossguard &middot; Crossbuck &middot; Marshal &middot; Cordon &middot; Clearway &middot; Wingman &middot; Dispatch</span>
+      </div>
+      <div class="fam">
+        <span class="fname">Instruments and assay</span>
+        <span class="frule">Anything about measuring, timing, or certifying. Borrowed from surveying, metallurgy, and music, where the vocabulary for measured trust is centuries older than software.</span>
+        <span class="fmembers">Assay &middot; Hallmark &middot; Veil &middot; Cadence &middot; Metronome &middot; Parallax &middot; Sightline &middot; Cairn &middot; Groundtruth &middot; Nightwatch &middot; Affidavit</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="rule"></div>
+    <div class="fgrid">
+      <p>
+        <strong>Status of this document.</strong> Proposal. Nothing here is adopted
+        specification text and nothing has been written into the v0.2 spec files, which
+        remain a verbatim conversion of the April 2026 whitepaper. Two extension profiles
+        are written, fifteen are allocated and unwritten, one is deliberately withheld, and
+        ten overlays need no allocation at all.
+      </p>
+      <p>
+        <strong>Confidentiality.</strong> This page describes an unadopted safety defect in
+        a specification positioned for external adoption, together with the commercial
+        architecture built on it. It is not for public distribution ahead of an owner
+        decision on E-03 and on disclosure.
+      </p>
+      <p>
+        <strong>Relationship to the roadmap.</strong> This does not complete the v0.3
+        milestone, whose three deliverables remain the machine-readable schemas, the Python
+        test harness, and the adversarial PCAP corpus. It supplies prerequisites that were
+        not scoped: the extension mechanism, the telemetry payload encodings the corpus
+        needs, and the errata that Class A conformance depends on.
+      </p>
+      <p>
+        Strynex and the overlay names in this document are trademarks of Specter Point
+        Intelligence, LLC and are not licensed under the CC BY 4.0 or Apache 2.0 terms that
+        cover the O-CPS specification and schemas. Conformance to O-CPS neither requires nor
+        implies permission to use them.
+      </p>
+      <p style="font-family:var(--f-mono); font-size:.72rem; color:var(--ink-faint); padding-top:.5rem;">
+        Locke Werks &middot; Specter Point Intelligence, LLC &middot; Colorado Springs, Colorado
+      </p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

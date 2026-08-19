@@ -1,0 +1,61 @@
+// O-CPS -- EP-0001 Intersection Assist payload
+//
+// PROPOSED. NOT NORMATIVE. See ../../../README.md and
+// ../../../../../../profiles/EP-0001-intersection-assist.md.
+//
+// Carried in ExtensionBlock.payload with profile_id = 0x0001,
+// profile_version = 1, inside an Intent message. CRITICAL is never set by this
+// profile.
+//
+// Sub-packaged as ocps.v2.ep0001 so that profiles cannot collide with each
+// other or with the base message set in the ocps.v2 namespace.
+//
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 Archon C. Locke, Specter Point Intelligence, LLC
+
+syntax = "proto3";
+
+package ocps.v2.ep0001;
+
+option java_package = "com.strynex.ocps.v2.ep0001";
+option java_multiple_files = true;
+option go_package = "github.com/lockewerks/Strynex/schemas/gen/ocpsv2/ep0001";
+
+
+// Whether the transmitter has committed to stopping.
+//
+// Read together with Intent.driver_committed (Appendix A.3 field 5), which
+// distinguishes a driver-committed intent from a system prediction.
+// WILL_PROCEED with driver_committed = false is a prediction and MUST NOT
+// alone raise a red-light-runner assessment at a receiver.
+enum StopIntent {
+  STOP_INTENT_UNKNOWN = 0;
+  WILL_STOP    = 1;
+  WILL_PROCEED = 2;
+  UNDECIDED    = 3;
+}
+
+message IntersectionApproach {
+  // SAE J2735 MAP IntersectionReferenceID, 4 bytes. See EP-0001 section 11
+  // open question 1: whether this should be J2735 or an O-CPS-local identifier
+  // is undecided, and it is the one normative dependency on SAE licensing that
+  // this profile would introduce.
+  bytes  intersection_id = 1;
+
+  // J2735 MAP lane identifiers. egress_lane is 0 while the movement is
+  // undecided, which is normal on a multi-lane approach until the driver
+  // selects.
+  uint32 ingress_lane = 2;
+  uint32 egress_lane  = 3;
+
+  // J2735 SPaT signal group governing the selected movement.
+  uint32 signal_group = 4;
+
+  // The transmitter's own estimates. A receiver MUST cross-check these against
+  // the transmitter's Pose in its PerceptionSummary; a contradiction fires the
+  // internal-inconsistency detector of section 9.3.
+  uint32 time_to_stop_line_ms    = 5;
+  uint32 distance_to_stop_line_cm = 6;
+
+  StopIntent stop_intent = 7;
+}
