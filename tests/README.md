@@ -135,7 +135,8 @@ deployment scenario (§15.5); consensus-comparison detection of systematic
 confidence miscalibration (§7.3).
 
 `TODO(spec)`: the reference adversarial PCAP corpus does not exist yet. It is a
-v0.3 deliverable and is tracked as its own issue.
+v0.3 deliverable and is tracked as
+[issue #3](https://github.com/Locke-Werks/Strynex/issues/3).
 
 ---
 
