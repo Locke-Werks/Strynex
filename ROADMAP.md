@@ -16,7 +16,11 @@ v1.0 release."
 
 **v0.3 is the current open milestone. It is not started.** No deliverable is in
 progress; nothing has been shipped against it. The three items below are tracked
-as individual issues.
+as individual issues under the
+[v0.3 (Interim)](https://github.com/Locke-Werks/Strynex/milestone/1) milestone:
+[#1](https://github.com/Locke-Werks/Strynex/issues/1),
+[#2](https://github.com/Locke-Werks/Strynex/issues/2), and
+[#3](https://github.com/Locke-Werks/Strynex/issues/3).
 
 ### 1. Complete Appendix A schemas in machine-readable protobuf
 

@@ -3,63 +3,53 @@
 A single self-contained page presenting the Strynex overlay catalog:
 `index.html`, no build step, no external requests, works from `file://`.
 
-## GitHub Pages is deliberately not enabled
+The repository README now carries the same content in markdown, which is what a
+visitor reads on landing. This page is the designed version of it: the stack
+diagram, the 26 overlay cards, and the code point tables laid out rather than
+listed.
 
-Do not enable it without deciding to publish this content to the open internet,
-because that is what enabling it does.
+## GitHub Pages is not enabled
 
-**A GitHub Pages site does not inherit the visibility of its repository.** Pages
-serves publicly regardless of whether the source repo is private. Access control,
-meaning a Pages site restricted to people with repo read access, is available only
-on GitHub Enterprise Cloud. It does not exist on Free, Pro, or Team. Publishing
-Pages from a private repository at all requires Pro or higher; a Free account can
-publish Pages only from public repositories.
+The repository is public, so enabling Pages would work and would put this page on
+the open internet at a `github.io` address. That is a publishing decision rather
+than a hosting detail, and nobody has made it yet.
 
-This repository is private and owned by a personal account. Enabling Pages here
-either fails, on Free, or succeeds and puts this page on the public internet, on
-Pro. There is no configuration that produces a private site.
+What it would take: Pages publishes from the repository root, a `/docs`
+directory, or a `gh-pages` branch. `site/` is none of those, so serving this page
+requires a workflow that names it explicitly. Publishing from `/docs` instead
+would serve `errata-v0.2.md`, `open-questions.md`, and `conversion-notes.md` as a
+site, which is a different set of pages than the one intended here.
 
-## Why that matters for this page specifically
+The earlier version of this file argued against Pages on the grounds that the
+repository was private and a Pages site does not inherit repository visibility.
+That was true and is now moot. Everything the page describes is in the public
+tree: the errata register including E-03, the commercial architecture, and the
+proposed code point allocations.
 
-The catalog references material that is not ready for publication:
+## What the page asserts
 
-- **Erratum E-03**, an unadopted safety defect in a specification positioned for
-  external adoption. Publishing an unfixed safety defect is a coordinated
-  disclosure decision, not a hosting decision. See
-  [`../docs/errata-v0.2.md`](../docs/errata-v0.2.md) and repository issue #5.
-- The commercial architecture: which layers are given away and which are retained.
-- Extension profile code point allocations that are proposed and not adopted.
+Status is stated on the page itself and repeated here because it is easy to read
+a designed page as settled:
 
-The page carries `<meta name="robots" content="noindex, nofollow">` as a second
-line of defence. That is a request to well-behaved crawlers and nothing more. It
-is not access control and it does not make publication safe.
-
-## Why `site/` and not `docs/`
-
-GitHub Pages can publish from three sources: the repository root, a `/docs`
-directory, or a `gh-pages` branch. `/docs` in this repository holds
-`errata-v0.2.md`, `open-questions.md`, and `conversion-notes.md`. Enabling Pages
-from `/docs` would publish all of them, including the errata register.
-
-`site/` is not a Pages source, so no Pages configuration reaches this directory by
-accident. Serving it requires an explicit workflow that names it.
-
-## If you decide to publish
-
-Make the decision first, then pick a route:
-
-- **Move the page to a separate public repository.** Cleanest. The private repo
-  stays private, and only what you chose to publish is published.
-- **Make this repository public.** Consistent with the standards posture stated in
-  §18, but it publishes the errata register at the same time, so E-03 should be
-  adopted first.
-- **Enable Pages on a Pro account and accept a public site.** Same disclosure as
-  above, with the added oddity of a public site over a private repo, which tends
-  to surprise people later.
+- Nothing on it is adopted specification text. `spec/` remains a verbatim
+  conversion of the April 2026 whitepaper.
+- Two extension profiles are written, fifteen are allocated and unwritten, one is
+  deliberately withheld, and ten overlays need no allocation at all.
+- E-03 is disclosed with its proposed resolution and is not fixed. See
+  [`../docs/errata-v0.2.md`](../docs/errata-v0.2.md#e-03).
 
 ## Regenerating
 
-`index.html` is generated from the Claude artifact source by wrapping the fragment
-in a document scaffold and a minimal CSS reset. The artifact runtime supplies both;
-a plain web server does not. Everything else, including all styling, is inline and
-unchanged.
+`index.html` is generated from the Claude artifact source by wrapping the
+fragment in a document scaffold and a minimal CSS reset. The artifact runtime
+supplies both; a plain web server does not. Everything else, including all
+styling, is inline and unchanged.
+
+Two edits have been made to the generated file since, and a regeneration has to
+repeat them:
+
+1. The `noindex, nofollow` robots meta was removed. It existed to limit exposure
+   while the repository was private.
+2. The closing "Confidentiality" note, which said the page was not for public
+   distribution ahead of a disclosure decision, was replaced by a "Disclosure"
+   note recording that the decision was made.
