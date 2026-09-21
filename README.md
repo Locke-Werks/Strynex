@@ -121,6 +121,10 @@ order rather than by technical similarity. An OEM, a city, a fleet, and a
 certification program buy on different cycles, through different procurement,
 against different budgets.
 
+The same catalog as a designed page, with the stack diagram and the overlay
+cards laid out rather than listed:
+**[locke-werks.github.io/Strynex](https://locke-werks.github.io/Strynex/)**.
+
 | Line | Buyer | Overlays |
 | --- | --- | --- |
 | **Strynex Drive** | OEM, tier-one supplier, aftermarket | 10 |
@@ -348,6 +352,7 @@ profiles/              Extension profile registry and profile specifications
 tests/                 Conformance suite scaffolding, stubs only, nothing passes
   README.md            What each of the seven suites must cover
 site/                  The overlay catalog as a standalone page, no build step
+                       Published to locke-werks.github.io/Strynex by .github/workflows/pages.yml
 docs/
   conversion-notes.md  How spec/ was produced, verified, and what was left uncorrected
   errata-v0.2.md       Eight verified v0.2 defects with proposed replacement text

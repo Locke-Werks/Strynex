@@ -8,19 +8,20 @@ visitor reads on landing. This page is the designed version of it: the stack
 diagram, the 26 overlay cards, and the code point tables laid out rather than
 listed.
 
-## GitHub Pages is not enabled
+## Published at locke-werks.github.io/Strynex
 
-The repository is public, so enabling Pages would work and would put this page on
-the open internet at a `github.io` address. That is a publishing decision rather
-than a hosting detail, and nobody has made it yet.
+Pages is enabled, with its build type set to `workflow` rather than to a branch
+and directory. [`.github/workflows/pages.yml`](../.github/workflows/pages.yml)
+uploads this directory and deploys it on any push to `main` that touches
+`site/**`.
 
-What it would take: Pages publishes from the repository root, a `/docs`
-directory, or a `gh-pages` branch. `site/` is none of those, so serving this page
-requires a workflow that names it explicitly. Publishing from `/docs` instead
-would serve `errata-v0.2.md`, `open-questions.md`, and `conversion-notes.md` as a
-site, which is a different set of pages than the one intended here.
+It is a workflow and not a Pages source setting because Pages can only publish
+from the repository root, `/docs`, or a `gh-pages` branch, and `site/` is none of
+those. Publishing from `/docs` would serve `errata-v0.2.md`,
+`open-questions.md`, and `conversion-notes.md` as pages of their own, which is a
+different site than the one intended here.
 
-The earlier version of this file argued against Pages on the grounds that the
+An earlier version of this file argued against Pages on the grounds that the
 repository was private and a Pages site does not inherit repository visibility.
 That was true and is now moot. Everything the page describes is in the public
 tree: the errata register including E-03, the commercial architecture, and the
